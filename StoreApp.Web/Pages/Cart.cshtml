@@ -1,0 +1,107 @@
+@page
+@{
+    Layout = "_Layout";
+}
+@model CartModel
+
+<h4 class="mb-4 fw-bold text-primary">
+    <i class="bi bi-cart3 me-2"></i> Alışveriş Sepeti
+</h4>
+
+@if (Model?.Cart?.Items.Count == 0)
+{
+    <div class="alert alert-info text-center shadow-sm rounded p-4">
+        <i class="bi bi-cart-x fs-1 text-secondary d-block mb-2"></i>
+        Sepetinizde ürün bulunmamaktadır. 
+        <br />
+        <a href="/" class="btn btn-outline-dark mt-3">
+            <i class="bi bi-house-door"></i> Alışverişe Devam Et
+        </a>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover align-middle shadow-sm">
+        <thead class="table-light text-center">
+            <tr>
+                <th>Ürün</th>
+                <th style="width:150px;">Adet</th>
+                <th>Fiyat</th>
+                <th>Toplam</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Cart.Items)
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <a href="/@item.Product.Url">
+                                <img src="~/img/products/@item.Product.Image"
+                                     alt="@item.Product.Name"
+                                     class="me-3 border rounded shadow-sm"
+                                     style="width: 70px; height: 70px; object-fit: contain;" />
+                            </a>
+                            <div>
+                                <a href="/@item.Product.Url" class="text-decoration-none text-dark fw-bold">
+                                    @item.Product.Name
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Adet butonları -->
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center align-items-center gap-2">
+                            <form method="post" asp-page-handler="DecreaseQuantity" class="d-inline">
+                                <input type="hidden" name="Id" value="@item.Product.Id" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm rounded-circle">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                            </form>
+
+                            <span class="fw-bold">@item.Quantity</span>
+
+                            <form method="post" asp-page-handler="IncreaseQuantity" class="d-inline">
+                                <input type="hidden" name="Id" value="@item.Product.Id" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm rounded-circle">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+
+                    <td class="text-center">@($"{item.Product.Price:N0} ₺")</td>
+                    <td class="text-center">@($"{item.Product.Price * item.Quantity:N0} ₺")</td>
+
+                    <td class="text-center">
+                        <form method="post" asp-page-handler="RemoveFromCart" class="d-inline">
+                            <input type="hidden" name="Id" value="@item.Product.Id" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot class="table-light fw-bold">
+            <tr>
+                <td colspan="3" class="text-end fs-5">Toplam:</td>
+                <td class="text-center fs-5">@($"{Model?.Cart?.CalculateTotal():N0} ₺")</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="/" class="btn btn-outline-dark btn-lg">
+            <i class="bi bi-arrow-left me-2"></i> Alışverişe Devam Et
+        </a>
+
+        <a href="/checkout" class="btn btn-success btn-lg">
+            <i class="bi bi-credit-card-2-front me-2"></i> Ödeme Yap
+        </a>
+    </div>
+}

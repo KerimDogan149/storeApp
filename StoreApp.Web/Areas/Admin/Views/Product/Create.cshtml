@@ -1,0 +1,84 @@
+@model StoreApp.Web.Areas.Admin.Models.ProductCreateViewModel
+
+
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Yeni Ürün Ekle</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" id="nameInput" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Url" class="form-label"></label>
+            <input asp-for="Url" class="form-control bg-light" readonly id="urlInput" />
+            <span asp-validation-for="Url" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Price" class="form-label"></label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsFeatured" class="form-check-input" />
+            <label asp-for="IsFeatured" class="form-check-label">Öne Çıkan Ürün</label>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsBestSeller" class="form-check-input" />
+            <label asp-for="IsBestSeller" class="form-check-label">En Çok Satan Ürün</label>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageFile" class="form-label">Ürün Görseli</label>
+            <input asp-for="ImageFile" class="form-control" type="file" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Kategoriler</label>
+            <select asp-for="SelectedCategoryIds" asp-items="@(new MultiSelectList(Model.AllCategories, "Id", "Name"))"
+                    class="form-select" multiple size="6"></select>
+            <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Kaydet</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function toUrlSlug(text) {
+            return text.toLowerCase()
+                .replace(/ç/g, "c").replace(/ğ/g, "g")
+                .replace(/ı/g, "i").replace(/ö/g, "o")
+                .replace(/ş/g, "s").replace(/ü/g, "u")
+                .replace(/&/g, "and")
+                .replace(/'/g, "")
+                .replace(/"/g, "")
+                .replace(/\./g, "")
+                .replace(/,/g, "")
+                .replace(/ /g, "-")
+                .replace(/--/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        document.getElementById("nameInput").addEventListener("input", function () {
+            const slug = toUrlSlug(this.value);
+            document.getElementById("urlInput").value = slug;
+        });
+    </script>
+}

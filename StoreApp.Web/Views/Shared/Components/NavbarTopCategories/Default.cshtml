@@ -1,0 +1,12 @@
+@model List<StoreApp.Data.Concrete.Category>
+
+@foreach (var category in Model)
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold px-3 py-2 rounded"
+           href="/category/@category.Url"
+           style="transition: background-color 0.2s ease;">
+            @category.Name
+        </a>
+    </li>
+}

@@ -1,0 +1,63 @@
+@model StoreApp.Web.Areas.Admin.Models.SlideCreateViewModel
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Yeni Slider Ekle</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="ImageFile" class="form-label">Görsel</label>
+            <input asp-for="ImageFile" type="file" class="form-control" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Başlık</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Link" class="form-label">Bağlantı</label>
+            <input asp-for="Link" class="form-control" readonly 
+                style="background-color: #e9ecef; cursor: not-allowed;" />
+            <span asp-validation-for="Link" class="text-danger"></span>
+        </div>
+
+
+        <div class="mb-3">
+            <label asp-for="Order" class="form-label">Sıra</label>
+            <input asp-for="Order" type="number" class="form-control" />
+            <span asp-validation-for="Order" class="text-danger"></span>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label">Aktif</label>
+        </div>
+
+        <button type="submit" class="btn btn-success">Kaydet</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>
+@section Scripts {
+    <script>
+        function toUrlSlug(text) {
+            return text
+                .toLowerCase()
+                .replace(/ç/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i")
+                .replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u")
+                .replace(/&/g, "and").replace(/'/g, "").replace(/"/g, "")
+                .replace(/\./g, "").replace(/,/g, "")
+                .replace(/\s+/g, "-").replace(/-+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        document.getElementById("Title").addEventListener("input", function () {
+            const title = this.value;
+            const slug = toUrlSlug(title);
+            document.getElementById("Link").value = "/" + slug;
+        });
+    </script>
+}

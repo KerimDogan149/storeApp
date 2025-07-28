@@ -1,0 +1,30 @@
+@model StoreApp.Data.Entities.Campaign
+
+<div class="container my-5">
+    <div class="row align-items-center">
+        <!-- Görsel -->
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="shadow-sm rounded overflow-hidden border">
+                <img src="~/img/campain/@Model.Image" class="img-fluid w-100" style="object-fit: cover; height: 100%;" alt="@Model.Title">
+            </div>
+        </div>
+
+        <!-- Metin İçeriği -->
+        <div class="col-lg-6">
+            <div class="p-4 bg-light rounded shadow-sm h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h1 class="fw-bold">@Model.Title</h1>
+                    <h5 class="text-primary mb-3">@Model.SubTitle</h5>
+                    <p class="text-secondary">@Model.Description</p>
+                </div>
+                
+                <div class="mt-4 text-end">
+                    <a href="@Model.Link" class="btn btn-primary btn-lg">
+                        <i class="bi bi-bag"></i> Alışverişe Başla
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

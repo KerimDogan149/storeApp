@@ -1,0 +1,60 @@
+@model ProductListViewModel
+
+<div class="container my-4">
+    <h4 class="fw-bold mb-4">Kategori: @ViewBag.CategoryName</h4>
+
+    @if (!Model.Products.Any())
+    {
+        <div class="alert alert-warning">Bu kategoride ürün bulunamadı.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var product in Model.Products)
+            {
+                <a href="/products/@product.Url" class="text-decoration-none text-dark">
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm position-relative">
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-primary rounded-pill">6 Taksit</span>
+                            </div>
+
+                            <img src="~/img/products/@product.Image"
+                                 alt="@product.Name"
+                                 class="card-img-top p-3"
+                                 style="height: 180px; object-fit: contain;" />
+
+                            <div class="card-body text-center">
+                                <div class="mb-2 text-warning small">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
+                                    <span class="text-muted">(12)</span>
+                                </div>
+
+                                <h6 class="card-title text-truncate">@product.Name</h6>
+                                <h5 class="text-danger fw-bold">@product.Price ₺</h5>
+                                <p class="text-success mb-0 small">KDV dahil ücretsiz kargo</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+
+        <!-- Sayfalama -->
+        @if (Model.PageInfo.TotalPages > 1)
+        {
+            <div page-model="@Model.PageInfo"
+                 page-action="Category"
+                 page-url="@Model.Products.FirstOrDefault()?.Category"
+                 page-class="btn"
+                 page-class-link="btn-outline-secondary"
+                 page-class-active="btn-secondary"
+                 class="btn-group my-4">
+            </div>
+        }
+    }
+</div>

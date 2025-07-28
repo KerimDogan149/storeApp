@@ -1,0 +1,67 @@
+@model IEnumerable<CategoryViewModel>
+
+<h5 class="fw-bold mb-3">Kategoriler</h5>
+
+
+<div class="position-relative">
+
+    <div id="categoryWrapper" class="category-slider-wrapper">
+        <div class="category-slider">
+            <a href="/products" class="category-box text-decoration-none @(ViewBag.SelectedCategory == null ? "selected" : "")">
+                <div class="category-img-wrapper">
+                    <img src="~/img/categories/all.jpg" alt="Tüm Ürünler" />
+                </div>
+                <div class="mt-2 fw-medium text-dark">Tüm Ürünler</div>
+            </a>
+
+            @foreach (var category in Model)
+            {
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-route-category="@category.Url"
+                   class="category-box text-decoration-none @(ViewBag.SelectedCategory == category.Url ? "selected" : "")">
+                    <div class="category-img-wrapper">
+                        <img src="~/img/categories/@category.Image" alt="@category.Name" />
+                    </div>
+                    <div class="mt-2 fw-medium text-dark">@category.Name</div>
+                </a>
+            }
+        </div>
+    </div>
+
+
+    <button type="button" class="category-scroll-btn left" onclick="scrollCategories(-1)">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+    <button type="button" class="category-scroll-btn right" onclick="scrollCategories(1)">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+</div>
+
+<script>
+    function scrollCategories(direction) {
+        const wrapper = document.getElementById('categoryWrapper');
+        const item = wrapper.querySelector('.category-box');
+        if (!item) return;
+
+        const scrollAmount = item.offsetWidth * 2 + 32;
+        const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+
+        if (direction > 0) {
+
+            if (Math.ceil(wrapper.scrollLeft) >= maxScrollLeft) {
+
+                wrapper.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                wrapper.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        } else {
+
+            if (wrapper.scrollLeft <= 0) {
+                wrapper.scrollTo({ left: maxScrollLeft, behavior: 'smooth' });
+            } else {
+                wrapper.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            }
+        }
+    }
+</script>

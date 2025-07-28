@@ -1,0 +1,81 @@
+@model StoreApp.Web.Areas.Admin.Models.CampaignViewModel
+
+
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Yeni Kampanya Ekle</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="ImageFile" class="form-label">Görsel</label>
+            <input asp-for="ImageFile" type="file" class="form-control" />
+            <span asp-validation-for="ImageFile" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label">Başlık</label>
+            <input asp-for="Title" class="form-control" id="Title" />
+            <span asp-validation-for="Title" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SubTitle" class="form-label">Alt Başlık</label>
+            <input asp-for="SubTitle" class="form-control" />
+            <span asp-validation-for="SubTitle" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Url" class="form-label">URL</label>
+            <input asp-for="Url" class="form-control" id="Url" readonly
+                   style="background-color: #e9ecef; cursor: not-allowed;" />
+            <span asp-validation-for="Url" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Link" class="form-label">Buton Linki</label>
+            <input asp-for="Link" class="form-control" />
+            <span asp-validation-for="Link" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Açıklama</label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label">Aktif</label>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-lg"></i> Kaydet
+            </button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">İptal</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function toUrlSlug(text) {
+            return text
+                .toLowerCase()
+                .replace(/ç/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i")
+                .replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u")
+                .replace(/[^a-z0-9\s-]/g, "") // özel karakter temizleme
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        document.getElementById("Title").addEventListener("input", function () {
+            const title = this.value;
+            const slug = toUrlSlug(title);
+            document.getElementById("Url").value = slug;
+        });
+    </script>
+}

@@ -1,0 +1,373 @@
+@model ProductListViewModel
+
+<div class="position-relative mb-5 my-4">
+    <!-- Carousel -->
+    <div id="mainBannerCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner rounded-4 shadow overflow-hidden">
+
+            @for (int i = 0; i < Model.Slides.Count(); i++)
+            {
+                var slide = Model.Slides.ElementAt(i);
+                var isActive = i == 0 ? "active" : "";
+
+                <div class="carousel-item @isActive">
+                    <a href="@slide.Link">
+                <div style="aspect-ratio: 16/5; height: auto; overflow: hidden;">
+                    <img src="~/img/slides/@slide.ImageUrl"
+                        class="d-block w-100"
+                        style="width: 100%; height: 100%; object-fit: cover;"
+                        alt="@slide.Title" />
+                </div>
+
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Indicators -->
+        <div class="carousel-indicators mt-4">
+            @for (int i = 0; i < Model.Slides.Count(); i++)
+            {
+                var isActive = i == 0 ? "active" : "";
+                var ariaCurrent = i == 0 ? "true" : "false";
+
+                <button type="button"
+                        data-bs-target="#mainBannerCarousel"
+                        data-bs-slide-to="@i"
+                        class="@isActive"
+                        aria-current="@ariaCurrent"
+                        aria-label="Slide @(i + 1)"
+                        style="width: 12px; height: 12px; border-radius: 50%; background-color: #333;">
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev position-absolute top-50 start-0 translate-middle-y"
+            type="button"
+            data-bs-target="#mainBannerCarousel"
+            data-bs-slide="prev"
+            style="z-index: 2;">
+        <span class="carousel-control-prev-icon bg-dark bg-opacity-75 rounded-circle p-3 shadow" aria-hidden="true"></span>
+        <span class="visually-hidden">Önceki</span>
+    </button>
+    <button class="carousel-control-next position-absolute top-50 end-0 translate-middle-y"
+            type="button"
+            data-bs-target="#mainBannerCarousel"
+            data-bs-slide="next"
+            style="z-index: 2;">
+        <span class="carousel-control-next-icon bg-dark bg-opacity-75 rounded-circle p-3 shadow" aria-hidden="true"></span>
+        <span class="visually-hidden">Sonraki</span>
+    </button>
+</div>
+
+
+
+
+<hr>
+
+
+
+@if (Model.FeaturedProducts?.Any() == true)
+{
+    <div class="container my-5 position-relative">
+        <h4 class="fw-bold mb-3">Günün Öne Çıkanları</h4>
+
+        <!-- Scrollable Container -->
+        <div id="featuredContainer" class="d-flex overflow-hidden gap-3">
+            @foreach (var p in Model.FeaturedProducts.Concat(Model.FeaturedProducts)) // Sonsuz döngü için iki kez render
+            {
+                <div class="card h-100 border rounded shadow-sm position-relative"
+                     style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
+                    <a href="/products/@p.Url" class="text-decoration-none text-dark">
+                        <!-- Etiket -->
+                        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
+                            @if (p.IsFeatured)
+                            {
+                                <span class="badge rounded-pill bg-danger">
+                                    <i class="bi bi-fire me-1"></i> Öne Çıkan
+                                </span>
+                            }
+                            <span class="badge rounded-pill bg-primary">6 Taksit</span>
+                        </div>
+
+                        <img src="~/img/products/@p.Image"
+                             class="card-img-top p-2"
+                             alt="@p.Name"
+                             style="height: 180px; object-fit: contain;" />
+
+                        <div class="card-body text-center">
+                            <div class="mb-1 text-warning">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                                <small class="text-muted">(12)</small>
+                            </div>
+                            <h6 class="card-title text-truncate">@p.Name</h6>
+                            <h5 class="text-danger fw-bold">@p.Price ₺</h5>
+                            <p class="text-success mb-0" style="font-size: 0.9rem;">
+                                KDV dahil ücretsiz kargo
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Slider Buttons -->
+        <button onclick="scrollFeatured(-1)" class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm" style="z-index: 2;">
+            <i class="bi bi-chevron-left fs-4"></i>
+        </button>
+        <button onclick="scrollFeatured(1)" class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm" style="z-index: 2;">
+            <i class="bi bi-chevron-right fs-4"></i>
+        </button>
+    </div>
+}
+
+@if (Model.Campaigns?.Any(c => c.IsActive) == true)
+
+{
+    <div class="container my-5 position-relative">
+        <h4 class="fw-bold mb-3">Kampanyalar</h4>
+
+        <!-- Scrollable Container -->
+        <div id="campaignContainer" class="d-flex overflow-hidden gap-4" style="scroll-behavior: smooth;">
+            @foreach (var c in Model.Campaigns.Where(c => c.IsActive).Concat(Model.Campaigns.Where(c => c.IsActive)))
+            {
+                <div class="card h-100 border rounded shadow-sm"
+                     style="min-width: calc(100% / 3.2); max-width: calc(100% / 3.2); flex: 0 0 auto;">
+                    <img src="~/img/campain/@c.Image" class="card-img-top" alt="@c.Title"
+                         style="width: 100%; height: 180px; object-fit: cover;">
+                    <div class="card-body">
+                        <p class="card-text text-muted mb-1">@c.SubTitle</p>
+                        <h5 class="fw-bold">@c.Title</h5>
+                        <a href="/campaign/@c.Url" class="btn btn-outline-dark mt-3">
+                            <i class="bi bi-arrow-right"></i> Alışverişe Başla
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Slider Buttons -->
+        <button onclick="scrollCampaigns(-1)" class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm" style="z-index: 2;">
+            <i class="bi bi-chevron-left fs-4"></i>
+        </button>
+        <button onclick="scrollCampaigns(1)" class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm" style="z-index: 2;">
+            <i class="bi bi-chevron-right fs-4"></i>
+        </button>
+    </div>
+}
+<hr>
+
+@if (Model.BestSellerProducts?.Any() == true)
+{
+    <div class="container my-5 position-relative">
+        <h4 class="fw-bold mb-3">Çok Satanlar</h4>
+
+<!-- Scrollable Row -->
+<div id="bestSellerContainer" class="d-flex overflow-hidden gap-3">
+    @foreach (var p in Model.BestSellerProducts.Concat(Model.BestSellerProducts)) // Çift liste
+    {
+        <div class="card h-100 border rounded shadow-sm position-relative"
+             style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
+            <a href="/products/@p.Url" class="text-decoration-none text-dark">
+                <!-- Etiket -->
+                <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
+                    @if (p.IsBestSeller)
+                    {
+                        <span class="badge rounded-pill bg-warning text-dark">
+                            <i class="bi bi-star-fill me-1"></i> Çok Satan
+                        </span>
+                    }
+                </div>
+                <img src="~/img/products/@p.Image"
+                     class="card-img-top p-2"
+                     alt="@p.Name"
+                     style="height: 180px; object-fit: contain;" />
+                <div class="card-body text-center">
+                    <h6 class="card-title text-truncate">@p.Name</h6>
+                    <h5 class="text-danger fw-bold">@p.Price ₺</h5>
+                    <p class="text-success mb-0" style="font-size: 0.9rem;">
+                        KDV dahil ücretsiz kargo
+                    </p>
+                </div>
+            </a>
+        </div>
+    }
+</div>
+
+
+        <!-- Slider Buttons -->
+        <button onclick="scrollBestSellers(-1)" class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm" style="z-index: 2;">
+            <i class="bi bi-chevron-left fs-4"></i>
+        </button>
+        <button onclick="scrollBestSellers(1)" class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm" style="z-index: 2;">
+            <i class="bi bi-chevron-right fs-4"></i>
+        </button>
+    </div>
+}
+
+<hr>
+
+@* <div class="container mt-4">
+
+    <!-- Üstte yatay kategori listesi -->
+    <div class="mb-4">
+        <vc:categories-list />
+    </div>
+
+    <!-- Ürün listesi -->
+    @if (!Model.Products.Any())
+    {
+        <div class="alert alert-warning">Ürün bulunamadı.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var product in Model.Products)
+            {
+                <a href="/products/@product.Url" class="text-decoration-none text-dark">
+
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm position-relative">
+                        
+                        <div class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-primary rounded-pill">6 Taksit</span>
+                        </div>
+
+                        <img src="~/img/products/@product.Image"
+                             alt="@product.Name"
+                             class="card-img-top p-3"
+                             style="height: 180px; object-fit: contain;" />
+
+                        <div class="card-body text-center">
+                            <div class="mb-2 text-warning small">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                                <span class="text-muted">(12)</span>
+                            </div>
+
+                            <h6 class="card-title text-truncate">@product.Name</h6>
+                            <h5 class="text-danger fw-bold">@product.Price ₺</h5>
+                            <p class="text-success mb-0 small">KDV dahil ücretsiz kargo</p>
+                        </div>
+                    </div>
+                </div>
+                </a>
+            }
+        </div>
+    }
+
+    <!-- Sayfalama -->
+    @if (Model.PageInfo.TotalPages > 1)
+    {
+        <div page-model="@Model.PageInfo"
+             page-action="Index"
+             page-class="btn"
+             page-class-link="btn-outline-secondary"
+             page-class-active="btn-secondary"
+             class="btn-group my-4">
+        </div>
+    }
+
+</div> *@
+
+<section class="features-section my-5">
+    <h5 class="fw-bold mb-4 text-center">Ayrıcalıklarımız</h5>
+    <div class="container">
+        <div class="row text-center justify-content-center g-4">
+
+            <div class="col-6 col-sm-4 col-md-2">
+                <i class="bi bi-truck fs-1 text-danger mb-2"></i>
+                <div class="fw-medium">Ücretsiz Kargo</div>
+                <small class="text-muted">Her siparişe özel</small>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2">
+                <i class="bi bi-arrow-repeat fs-1 text-danger mb-2"></i>
+                <div class="fw-medium">Kolay İade</div>
+                <small class="text-muted">14 gün içinde iade garantisi</small>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2">
+                <i class="bi bi-credit-card-2-back fs-1 text-danger mb-2"></i>
+                <div class="fw-medium">Taksitli Ödeme</div>
+                <small class="text-muted">Kredi kartına 12 aya varan taksit</small>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2">
+                <i class="bi bi-gift fs-1 text-danger mb-2"></i>
+                <div class="fw-medium">Hediye Fırsatları</div>
+                <small class="text-muted">Kampanya dönemlerinde sürprizler</small>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2">
+                <i class="bi bi-shield-lock fs-1 text-danger mb-2"></i>
+                <div class="fw-medium">Güvenli Alışveriş</div>
+                <small class="text-muted">SSL sertifikalı ödeme</small>
+        </div>
+    </div>
+</section>
+
+
+
+
+<script>
+    // Sayfa yenilendiğinde scroll pozisyonunu koru
+    window.addEventListener("beforeunload", () => {
+        localStorage.setItem("scrollPos", window.scrollY);
+    });
+
+    window.addEventListener("load", () => {
+        const scrollPos = localStorage.getItem("scrollPos");
+        if (scrollPos) {
+            window.scrollTo(0, parseInt(scrollPos));
+            localStorage.removeItem("scrollPos");
+        }
+    });
+
+    // Ortak scroll fonksiyonu
+    function scrollHorizontally(containerId, direction) {
+        const container = document.getElementById(containerId);
+        const scrollAmount = 600;
+        const step = 10;
+        const delay = 5;
+        let scrolled = 0;
+
+        const totalScroll = container.scrollWidth / 2;
+        const maxScrollLeft = container.scrollWidth - container.clientWidth;
+
+        const smoothScroll = setInterval(() => {
+            container.scrollLeft += direction * step;
+            scrolled += step;
+
+            if (scrolled >= scrollAmount) {
+                clearInterval(smoothScroll);
+
+                if (container.scrollLeft >= maxScrollLeft && direction === 1) {
+                    container.scrollLeft = 0;
+                } else if (container.scrollLeft <= 0 && direction === -1) {
+                    container.scrollLeft = maxScrollLeft;
+                }
+            }
+        }, delay);
+    }
+
+    function scrollBestSellers(direction) {
+        scrollHorizontally("bestSellerContainer", direction);
+    }
+
+    function scrollFeatured(direction) {
+        scrollHorizontally("featuredContainer", direction);
+    }
+
+    function scrollCampaigns(direction) {
+        scrollHorizontally("campaignContainer", direction);
+    }
+</script>
+

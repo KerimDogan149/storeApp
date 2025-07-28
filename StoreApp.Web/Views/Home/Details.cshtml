@@ -1,0 +1,76 @@
+@model Product
+@using System.Globalization
+
+<div class="container my-5">
+    <div class="row g-5 align-items-start">
+        <!-- Ürün Görseli -->
+        <div class="col-md-6 text-center">
+            <div class="border rounded shadow-sm p-3 bg-white">
+                <img src="~/img/products/@Model.Image" 
+                     class="img-fluid rounded"
+                     alt="@Model.Name"
+                     style="max-height: 400px; object-fit: contain;" />
+            </div>
+        </div>
+
+        <!-- Ürün Bilgileri -->
+        <div class="col-md-6">
+        <h2 class="fw-bold">@Model.Name</h2>
+
+        <!-- Öne Çıkan & Çok Satan Etiketleri -->
+        <div class="mb-2 d-flex gap-2">
+            @if (Model.IsFeatured)
+            {
+                <span class="badge rounded-pill bg-danger">
+                    <i class="bi bi-fire me-1"></i> Öne Çıkan
+                </span>
+            }
+            @if (Model.IsBestSeller)
+            {
+                <span class="badge rounded-pill bg-warning text-dark">
+                    <i class="bi bi-star-fill me-1"></i> Çok Satan
+                </span>
+            }
+        </div>
+
+            <div class="my-3">
+                <span class="text-warning fs-5">
+                    ★ ★ ★ ★ ☆
+                </span>
+                <small class="text-muted">(12 Değerlendirme)</small>
+            </div>
+
+            <h3 class="text-danger fw-bold mb-3">@Model.Price.ToString("C", CultureInfo.GetCultureInfo("tr-TR"))</h3>
+
+            <p class="text-muted">@Model.Description</p>
+
+            <div class="mb-2 text-success small">
+                <i class="bi bi-truck"></i> Ücretsiz Kargo &nbsp; | &nbsp;
+                <i class="bi bi-shield-lock"></i> Güvenli Ödeme
+            </div>
+
+            @if (Model.Categories?.Any() == true)
+            {
+                <div class="mb-3">
+                    <strong>Kategoriler:</strong>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <span class="badge bg-secondary me-1">@c.Name</span>
+                    }
+                </div>
+            }
+
+            <div class="d-grid gap-2 d-md-block">
+                <form method="post"class="d-inline" asp-page="/Cart">
+                    <input type="hidden" asp-for=@Model.Id name="Id"/>
+                    <button type="submit" class="btn btn-dark btn-lg px-4 mt2-">
+                    <i class="bi bi-cart-plus me-1"></i> Sepete Ekle
+                    </button>
+                </form>
+                <a href="/" class="btn btn-outline-secondary btn-lg px-4 mx-2">
+                    <i class="bi bi-arrow-left"></i> Geri Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

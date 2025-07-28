@@ -1,0 +1,58 @@
+@model Cart
+
+<li class="nav-item dropdown">
+    <a class="nav-link position-relative dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-cart3 fs-5"></i>
+        @if (Model.Items.Count > 0)
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @Model.Items.Sum(i => i.Quantity)
+            </span>
+        }
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end p-3 shadow-sm" style="min-width: 320px;">
+        @if (!Model.Items.Any())
+        {
+            <li class="text-center text-muted">Sepetiniz boş</li>
+        }
+        else
+        {
+            @foreach (var item in Model.Items)
+            {
+                <li class="d-flex align-items-center mb-2">
+                    <img src="~/img/products/@item.Product.Image"
+                         alt="@item.Product.Name"
+                         class="rounded border me-2"
+                         style="width:45px; height:45px; object-fit:contain;" />
+                    <div class="flex-grow-1">
+                        <div class="fw-semibold small">@item.Product.Name</div>
+                        <small class="text-muted">@item.Quantity x @($"{item.Product.Price:N0}") ₺</small>
+                    </div>
+                    <div class="ms-2 text-end">
+                        <small class="text-dark fw-bold">@($"{item.Quantity * item.Product.Price:N0}") ₺</small>
+                    </div>
+                </li>
+            }
+
+            <li><hr class="dropdown-divider" /></li>
+
+                        <li class="d-flex justify-content-between fw-bold mb-2">
+                <span>Toplam:</span>
+                <span>@(Model.CalculateTotal().ToString("N0")) ₺</span>
+            </li>
+            
+            <li class="d-flex gap-2">
+                <a href="/cart" class="btn btn-outline-dark btn-sm w-50">
+                    <i class="bi bi-bag-check me-1"></i> Sepet
+                </a>
+                <a href="/checkout" class="btn btn-success btn-sm w-50">
+                    <i class="bi bi-credit-card me-1"></i> Ödeme
+                </a>
+            </li>
+
+
+
+        }
+    </ul>
+</li>

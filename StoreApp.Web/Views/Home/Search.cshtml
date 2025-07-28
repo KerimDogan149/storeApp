@@ -1,0 +1,30 @@
+@model ProductListViewModel
+
+<div class="container my-4">
+    <h5 class="fw-bold mb-3">Arama Sonuçları: "@ViewBag.SearchTerm"</h5>
+
+    @if (!Model.Products.Any())
+    {
+        <div class="alert alert-warning">Aramanıza uygun ürün bulunamadı.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            @foreach (var p in Model.Products)
+            {
+                <div class="col">
+                    <a href="/products/@p.Url" class="text-decoration-none text-dark">
+                        <div class="card h-100 border shadow-sm">
+                            <img src="~/img/products/@p.Image" class="card-img-top p-3" alt="@p.Name"
+                                 style="height: 180px; object-fit: contain;" />
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-truncate">@p.Name</h6>
+                                <h5 class="text-danger fw-bold">@p.Price ₺</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

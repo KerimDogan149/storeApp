@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg bg-white shadow-sm border-bottom mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <!-- LOGO -->
+        <a class="navbar-brand fw-bold text-primary fs-4" href="/Admin/Admin">
+            <i class="bi bi-speedometer2 me-2"></i> StoreApp Admin Paneli
+        </a>
+
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+            <li class="nav-item mx-2">
+                <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">
+                    <i class="bi bi-tags me-1"></i> Kategoriler
+                </a>
+            </li>
+
+            <li class="nav-item mx-2">
+                <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">
+                    <i class="bi bi-box-seam me-1"></i> Ürünler
+                </a>
+            </li>
+
+            <li class="nav-item mx-2">
+                 <a class="nav-link" asp-area="Admin" asp-controller="Slide" asp-action="Index">
+                    <i class="bi bi-images me-1"></i> Slaytlar
+                </a>
+            </li>
+
+            <li class="nav-item mx-2">
+            <a class="nav-link" asp-area="Admin" asp-controller="Campaign" asp-action="Index">
+                <i class="bi bi-megaphone me-1"></i> Kampanyalar
+            </a>
+        </li>
+
+        </ul>
+
+
+
+        <!-- Sağ Kısım -->
+        <div class="d-flex align-items-center gap-2">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span class="me-2 text-dark">Hoşgeldiniz, @User.Identity.Name</span>
+
+                <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger btn-sm">Çıkış Yap</button>
+                </form>
+            }
+        </div>
+
+    </div>
+</nav>

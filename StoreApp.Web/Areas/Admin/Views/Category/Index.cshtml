@@ -1,0 +1,65 @@
+@model IEnumerable<StoreApp.Data.Concrete.Category>
+
+@{
+    ViewData["Title"] = "Kategori Listesi";
+    var currentStatus = Context.Request.Query["status"].ToString();
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-3">Kategori Listesi</h2>
+
+    <div class="row mb-3">
+        <div class="col text-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Yeni Kategori
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-warning">@TempData["error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Henüz kategori eklenmemiş.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>İsim</th>
+                    <th>Url</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.Url</td>
+
+                        <td>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-pencil-square"></i> Düzenle
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post"
+                                      onsubmit="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Sil
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

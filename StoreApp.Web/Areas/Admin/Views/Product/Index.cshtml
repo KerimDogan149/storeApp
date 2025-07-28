@@ -1,0 +1,114 @@
+@model IEnumerable<StoreApp.Data.Concrete.Product>
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+
+<form method="get" class="mb-4 d-flex gap-3 flex-wrap align-items-end">
+    <div>
+        <label class="form-label">Kategori</label>
+        <select class="form-select" name="categoryId" onchange="this.form.submit()">
+            <option value="">Tüm Kategoriler</option>
+            @foreach (var category in (SelectList)ViewBag.Categories)
+            {
+                <option value="@category.Value" selected="@(ViewBag.SelectedCategoryId?.ToString() == category.Value ? "selected" : null)">
+                    @category.Text
+                </option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label class="form-label">Ürün Ara</label>
+        <input type="text" class="form-control" name="search" value="@ViewBag.Search" placeholder="Ürün adı girin..." />
+    </div>
+
+    <div>
+        <label class="form-label">Öne Çıkan</label>
+        <select class="form-select" name="isFeatured" onchange="this.form.submit()">
+            <option value="">Hayır</option>
+            <option value="true" selected="@(ViewBag.IsFeaturedFilter == "true" ? "selected" : null)">Evet</option>
+
+        </select>
+    </div>
+
+    <div>
+        <label class="form-label">Çok Satan</label>
+        <select class="form-select" name="isBestSeller" onchange="this.form.submit()">
+            <option value="">Hayır</option>
+            <option value="true" selected="@(ViewBag.IsBestSellerFilter == "true" ? "selected" : null)">Evet</option>
+
+        </select>
+    </div>
+</form>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Ürünler</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Yeni Ürün
+        </a>
+    </div>
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-warning">@TempData["error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center p-5" style="background-color: #dff6fd;">
+            <i class="bi bi-box-seam display-3 mb-3 d-block text-secondary"></i>
+            <h5>Ürün bulunamadı.</h5>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="card-body">
+                            <p class="text-muted mb-1"><strong>ID:</strong> @product.Id</p>
+                    <div class="mb-3 text-center position-relative">
+                        <img src="~/img/products/@product.Image" 
+                            alt="@product.Name" 
+                            class="img-fluid rounded shadow-sm" 
+                            style="max-height: 120px;" />
+
+                        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
+                            @if (product.IsFeatured)
+                            {
+                                        <span class="badge rounded-pill bg-danger">
+                                            <i class="bi bi-fire me-1"></i> Öne Çıkan
+                                        </span>
+                            }
+                            @if (product.IsBestSeller)
+                            {
+                                        <span class="badge rounded-pill bg-warning text-dark">
+                                            <i class="bi bi-star-fill me-1"></i> Çok Satan
+                                        </span>
+                            }
+                        </div>
+                    </div>
+
+                            <h5 class="card-title fw-semibold">@product.Name</h5>
+                            <p class="text-muted mb-1"><strong>URL:</strong> @product.Url</p>
+                            <p class="text-muted mb-3"><strong>Fiyat:</strong> @product.Price ₺</p>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-pencil-square"></i> Düzenle
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@product.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Sil
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

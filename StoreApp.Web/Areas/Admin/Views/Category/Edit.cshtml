@@ -1,0 +1,122 @@
+@model StoreApp.Web.Areas.Admin.Models.CategoryEditViewModel
+
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+    var selectedProducts = Model.AllProducts
+        .Where(p => Model.SelectedProductIds.Contains(p.Id)).ToList();
+    var unselectedProducts = Model.AllProducts
+        .Where(p => !Model.SelectedProductIds.Contains(p.Id)).ToList();
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Kategori Güncelle</h2>
+
+    <form asp-action="Edit" method="post">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Url" class="form-label"></label>
+            <input asp-for="Url" class="form-control bg-light" readonly />
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Seçilen Ürünler</label>
+                <select multiple class="form-select" id="selectedProducts" size="10">
+                    @foreach (var product in selectedProducts)
+                    {
+                        <option value="@product.Id">@product.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex flex-column justify-content-center align-items-center gap-2">
+                <button type="button" id="btnAdd" class="btn btn-outline-primary">&raquo;</button>
+                <button type="button" id="btnRemove" class="btn btn-outline-danger">&laquo;</button>
+            </div>
+
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Tüm Ürünler</label>
+                <select multiple class="form-select" id="allProducts" size="10">
+                    @foreach (var product in unselectedProducts)
+                    {
+                        <option value="@product.Id">@product.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Seçilen ürünlerin Id'leri gizli input olarak gönderilir -->
+        <div id="hiddenInputs"></div>
+
+        <button type="submit" class="btn btn-success">Güncelle</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const btnAdd = document.getElementById('btnAdd');
+        const btnRemove = document.getElementById('btnRemove');
+        const selectedBox = document.getElementById('selectedProducts');
+        const allBox = document.getElementById('allProducts');
+        const hiddenInputs = document.getElementById('hiddenInputs');
+
+        function moveSelected(from, to) {
+            const selected = Array.from(from.selectedOptions);
+            selected.forEach(opt => {
+                from.removeChild(opt);
+                to.appendChild(opt);
+            });
+            updateHiddenInputs();
+        }
+
+        function updateHiddenInputs() {
+            hiddenInputs.innerHTML = '';
+            Array.from(selectedBox.options).forEach(opt => {
+                hiddenInputs.innerHTML += `<input type="hidden" name="SelectedProductIds" value="${opt.value}" />`;
+            });
+        }
+            btnAdd.addEventListener('click', () => moveSelected(selectedBox, allBox));
+            btnRemove.addEventListener('click', () => moveSelected(allBox, selectedBox));  
+
+
+        // İlk yüklemede hidden inputs oluştur
+        updateHiddenInputs();
+
+        // Dinamik URL slug oluşturma
+        function toUrlSlug(text) {
+            return text
+                .toLowerCase()
+                .replace(/ç/g, "c").replace(/ğ/g, "g")
+                .replace(/ı/g, "i").replace(/ö/g, "o")
+                .replace(/ş/g, "s").replace(/ü/g, "u")
+                .replace(/&/g, "and")
+                .replace(/'/g, "")
+                .replace(/"/g, "")
+                .replace(/\./g, "")
+                .replace(/,/g, "")
+                .replace(/\s+/g, "-")
+                .replace(/--+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        const nameInput = document.getElementById('Name');
+        const urlInput = document.getElementById('Url');
+
+        if (nameInput && urlInput) {
+            nameInput.addEventListener('input', () => {
+                urlInput.value = toUrlSlug(nameInput.value);
+            });
+        }
+
+
+    </script>
+}
