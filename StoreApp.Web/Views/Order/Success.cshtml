@@ -1,0 +1,42 @@
+@model StoreApp.Data.Concrete.Order
+
+@{
+    ViewData["Title"] = "Sipariş Tamamlandı";
+}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="text-center border shadow-sm rounded p-5 bg-white" style="max-width: 600px; width: 100%;">
+        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+
+        <h2 class="mt-4 fw-bold text-success">Teşekkürler!</h2>
+
+        <p class="fs-5 text-muted mt-3">
+            Siparişiniz başarıyla oluşturuldu.
+        </p>
+
+        <div class="alert alert-light border text-start mt-4">
+            <div><strong>Sipariş No:</strong> #@Model.Id</div>
+            <div><strong>Tarih:</strong> @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</div>
+            <div>
+                <strong>Teslimat:</strong> @Model.Address?.Title<br />
+                @Model.Address?.FullName - @Model.Address?.PhoneNumber<br />
+                @Model.Address?.Neighborhood, @Model.Address?.District / @Model.Address?.Province<br />
+                @Model.Address?.FullAddress
+            </div>
+        </div>
+
+        <p class="fs-6 text-muted mb-4">
+            Siparişiniz en kısa sürede işleme alınacaktır. Detayları <strong>Hesabım &gt; Siparişlerim</strong> sayfasından takip edebilirsiniz.
+        </p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/" class="btn btn-outline-dark btn-lg">
+                <i class="bi bi-house-door me-1"></i> Anasayfaya Dön
+            </a>
+
+            <a href="/account/orders" class="btn btn-success btn-lg">
+                <i class="bi bi-box-seam me-1"></i> Siparişlerim
+            </a>
+        </div>
+    </div>
+</div>

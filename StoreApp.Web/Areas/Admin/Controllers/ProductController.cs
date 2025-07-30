@@ -23,7 +23,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
-    [Authorize (Roles = "Admin,Manager")]
+    [Authorize (Roles = "Admin")]
+
 
     [Area("Admin")]
 

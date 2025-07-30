@@ -21,7 +21,8 @@ using StoreApp.Web.Areas.Admin.Models;
 
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
-    [Authorize (Roles = "Admin,Manager")]
+    [Authorize (Roles = "Admin")]
+
     [Area("Admin")]
 
     public class CategoryController : Controller

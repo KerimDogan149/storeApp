@@ -5,12 +5,32 @@
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
-      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\campain\\37ca44b4-18b6-46c3-9292-d502f8667d15.jpg",
-      "PackagePath": "staticwebassets\\img\\campain\\37ca44b4-18b6-46c3-9292-d502f8667d15.jpg"
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\data\\locations\\ilceler.json",
+      "PackagePath": "staticwebassets\\data\\locations\\ilceler.json"
     },
     {
-      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\campain\\591c29d2-9ce1-41ab-8cc4-ef95b003200d.jpg",
-      "PackagePath": "staticwebassets\\img\\campain\\591c29d2-9ce1-41ab-8cc4-ef95b003200d.jpg"
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\data\\locations\\mahalleler-1.json",
+      "PackagePath": "staticwebassets\\data\\locations\\mahalleler-1.json"
+    },
+    {
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\data\\locations\\mahalleler-2.json",
+      "PackagePath": "staticwebassets\\data\\locations\\mahalleler-2.json"
+    },
+    {
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\data\\locations\\mahalleler-3.json",
+      "PackagePath": "staticwebassets\\data\\locations\\mahalleler-3.json"
+    },
+    {
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\data\\locations\\mahalleler-4.json",
+      "PackagePath": "staticwebassets\\data\\locations\\mahalleler-4.json"
+    },
+    {
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\data\\locations\\sehirler.json",
+      "PackagePath": "staticwebassets\\data\\locations\\sehirler.json"
+    },
+    {
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\campain\\37ca44b4-18b6-46c3-9292-d502f8667d15.jpg",
+      "PackagePath": "staticwebassets\\img\\campain\\37ca44b4-18b6-46c3-9292-d502f8667d15.jpg"
     },
     {
       "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\campain\\db175680-d959-429a-9a6d-bec70e8e40b2.jpg",

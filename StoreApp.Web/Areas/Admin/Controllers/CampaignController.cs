@@ -22,7 +22,8 @@ using StoreApp.Web.Areas.Admin.Models;
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize (Roles = "Admin,Manager")]
+    [Authorize (Roles = "Admin")]
+
 
     public class CampaignController : Controller
     {

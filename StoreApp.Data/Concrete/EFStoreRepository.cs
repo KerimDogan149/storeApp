@@ -6,6 +6,9 @@ using StoreApp.Data.Concrete;
 using StoreApp.Data.Abstract;
 using Microsoft.EntityFrameworkCore;
 using StoreApp.Data.Entities;
+using StoreApp.Data.Location;
+
+
 
 
 
@@ -15,6 +18,8 @@ namespace StoreApp.Data.Concrete
     public class EFStoreRepository : IStoreRepository
     {
         private StoreDbContext _context;
+
+
         public EFStoreRepository(StoreDbContext context)
         {
             _context = context;
@@ -25,6 +30,12 @@ namespace StoreApp.Data.Concrete
         public IQueryable<Slide> Slides => _context.Slides;
 
         public IQueryable<Campaign> Campaigns => _context.Campaigns;
+
+        public IQueryable<Address> Addresses => _context.Addresses;
+
+        public IQueryable<Order> Orders => _context.Orders;
+        public IQueryable<OrderItem> OrderItems => _context.OrderItems;
+
 
 
         public void CreateProduct(Product entity)
@@ -152,8 +163,8 @@ namespace StoreApp.Data.Concrete
         }
 
         //Campaign
-        
-         public async Task<List<Campaign>> GetAllCampaignsAsync()
+
+        public async Task<List<Campaign>> GetAllCampaignsAsync()
         {
             return await _context.Campaigns.OrderByDescending(c => c.Id).ToListAsync();
         }
@@ -185,6 +196,111 @@ namespace StoreApp.Data.Concrete
             return await _context.Campaigns
                 .FirstOrDefaultAsync(c => c.Url.ToLower() == url.ToLower());
         }
+
+        // Site Social Settings
+        public async Task<SiteSocialAddressSetting?> GetSiteSocialSettingsAsync()
+        {
+            return await _context.SiteSocialAddressSettings.FirstOrDefaultAsync();
+        }
+
+        public async Task UpdateSiteSocialSettingsAsync(SiteSocialAddressSetting setting)
+        {
+            _context.SiteSocialAddressSettings.Update(setting);
+            await _context.SaveChangesAsync();
+        }
+
+        //adress
+
+        public async Task<List<Address>> GetAddressesByUserIdAsync(string userId)
+        {
+            return await _context.Addresses
+                .Where(a => a.AppUserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<Address?> GetAddressByIdAsync(int id)
+        {
+            return await _context.Addresses.FindAsync(id);
+        }
+
+        public async Task AddAddressAsync(Address address)
+        {
+            _context.Addresses.Add(address);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAddressAsync(Address address)
+        {
+            _context.Addresses.Update(address);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAddressAsync(Address address)
+        {
+            _context.Addresses.Remove(address);
+            await _context.SaveChangesAsync();
+        }
+
+
+        //Sipariş İşlemleri
+
+        // Sipariş Ekleme
+        public async Task AddOrderAsync(Order order)
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+        }
+
+        // Tek bir siparişi id’ye göre getir
+        public async Task<Order?> GetOrderByIdAsync(int id)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Include(o => o.Address)
+                .Include(o => o.AppUser)
+                .FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        // Belirli bir kullanıcıya ait siparişleri getir
+        public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .Where(o => o.AppUserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+
+        // Admin için tüm siparişleri getir
+        public async Task<List<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders
+                .Include(o => o.AppUser)
+                .Include(o => o.Address)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+        
+        public async Task CreateOrderAsync(Order order)
+        {
+            if (order == null || order.OrderItems == null || !order.OrderItems.Any())
+            {
+                throw new ArgumentException("Geçersiz sipariş verisi.");
+            }
+
+            await _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
+        }
+
+
+
+
+
+
 
     }
 

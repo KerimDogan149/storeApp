@@ -24,10 +24,26 @@ public class StoreDbContext : IdentityDbContext<AppUser>
     
     public DbSet<Campaign> Campaigns => Set<Campaign>();
 
+    public DbSet<Address> Addresses => Set<Address>();
+
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+
+    
+
+    public DbSet<SiteSocialAddressSetting> SiteSocialAddressSettings => Set<SiteSocialAddressSetting>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.Property(u => u.FirstName).HasMaxLength(100);
+            entity.Property(u => u.LastName).HasMaxLength(100);
+            entity.Property(u => u.PhoneNumber).HasMaxLength(20);
+
+        });
 
         // Composite Key for ProductCategory
         modelBuilder.Entity<ProductCategory>()
@@ -203,6 +219,16 @@ public class StoreDbContext : IdentityDbContext<AppUser>
                 Link = "/kampanya/3"
             }
         });
+        
+            modelBuilder.Entity<SiteSocialAddressSetting>().HasData(new SiteSocialAddressSetting
+            {
+                Id = 1,
+                PhoneNumber = "0212 212 12 12",
+                FacebookUrl = "https://facebook.com/yourpage",
+                InstagramUrl = "https://instagram.com/yourpage",
+                TwitterUrl = "https://twitter.com/yourpage",
+                YoutubeUrl = "https://youtube.com/yourpage"
+            });
 
 
     }

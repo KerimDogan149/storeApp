@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
-    [Authorize (Roles = "Admin,Manager")]
+    [Authorize (Roles = "Admin")]
     [Area("Admin")]
     public class AdminController : Controller
     {

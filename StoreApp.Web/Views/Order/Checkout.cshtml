@@ -1,0 +1,127 @@
+@model StoreApp.Web.Models.OrderCheckoutViewModel
+@{
+    ViewData["Title"] = "Siparişi Tamamla";
+}
+
+<h2 class="mb-4 fw-bold text-primary">
+    <i class="bi bi-credit-card-2-front me-2"></i> Siparişi Tamamla
+</h2>
+
+@if (Model.Cart.Items.Count == 0)
+{
+    <div class="alert alert-warning text-center">
+        Sepetinizde ürün bulunmamaktadır.
+        <br />
+        <a href="/" class="btn btn-outline-dark mt-3">
+            <i class="bi bi-house-door"></i> Alışverişe Devam Et
+        </a>
+    </div>
+}
+else
+{
+    <form asp-action="Checkout" method="post">
+        <div class="row">
+            <!-- Adres Seçimi -->
+            <div class="col-md-6">
+                <h5 class="fw-bold mb-3">Teslimat Adresi Seçimi</h5>
+
+                <div class="mb-3">
+                    <label for="SelectedAddressId" class="form-label">Adres Seçin</label>
+                    <select id="SelectedAddressId" name="SelectedAddressId" class="form-select" onchange="loadAddressDetails()">
+                        @foreach (var address in Model.Addresses)
+                        {
+                            <option value="@address.Id">@address.Title</option>
+                        }
+                    </select>
+                </div>
+
+                <div id="address-details" class="border rounded p-3 bg-light">
+                    <small class="text-muted">Adres bilgileri yüklenecek...</small>
+                </div>
+
+                <!-- Ödeme Yöntemi (şimdilik pasif) -->
+                <div class="mt-4">
+                    <h5 class="fw-bold mb-3">Ödeme Yöntemleri</h5>
+                    <div class="border rounded p-3 bg-white shadow-sm">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked disabled>
+                            <label class="form-check-label fw-bold" for="creditCard">
+                                <i class="bi bi-credit-card-2-front me-1"></i> Kredi Kartı
+                            </label>
+                        </div>
+
+                        <div class="border-top pt-3">
+                            <p class="fw-semibold">Kredi Kartı / Banka Kartı ile Öde</p>
+                            <input type="text" class="form-control mb-2" placeholder="Kart Üzerindeki Ad Soyad" disabled>
+                            <input type="text" class="form-control mb-2" placeholder="Kart Numarası" disabled>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control" placeholder="Son Kullanma Tarihi" disabled>
+                                <input type="text" class="form-control" placeholder="CVV" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sepet Özeti -->
+            <div class="col-md-6">
+<h5 class="fw-bold mb-3">Sepet Özeti</h5>
+
+<ul class="list-group mb-3">
+    @foreach (var item in Model.Cart.Items)
+    {
+        <li class="list-group-item d-flex align-items-center gap-3">
+            <img src="~/img/products/@item.Product.Image"
+                 alt="@item.Product.Name"
+                 class="rounded border"
+                 style="width: 60px; height: 60px; object-fit: contain;" />
+            <div class="flex-grow-1">
+                <div class="fw-semibold">@item.Product.Name</div>
+                <small class="text-muted">@item.Quantity x @($"{item.Product.Price:N0}") ₺</small>
+            </div>
+            <span class="fw-bold">@($"{item.Quantity * item.Product.Price:N0}") ₺</span>
+        </li>
+    }
+
+    <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+        <span>Toplam:</span>
+        <span>@Model.Cart.CalculateTotal().ToString("N0") ₺</span>
+    </li>
+</ul>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/cart" class="btn btn-outline-dark">
+                        <i class="bi bi-arrow-left me-1"></i> Sepete Dön
+                    </a>
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-credit-card me-1"></i> Siparişi Onayla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+@section Scripts {
+    <script>
+        function loadAddressDetails() {
+            const addressId = document.getElementById("SelectedAddressId").value;
+            const detailsBox = document.getElementById("address-details");
+
+            fetch(`/order/getaddressdetails/${addressId}`)
+                .then(response => response.text())
+                .then(html => {
+                    detailsBox.innerHTML = html;
+                })
+                .catch(() => {
+                    detailsBox.innerHTML = "<div class='text-danger'>Adres bilgisi getirilemedi.</div>";
+                });
+        }
+
+        // Sayfa yüklenince ilk adres bilgilerini getir
+        document.addEventListener("DOMContentLoaded", function () {
+            loadAddressDetails();
+        });
+    </script>
+}

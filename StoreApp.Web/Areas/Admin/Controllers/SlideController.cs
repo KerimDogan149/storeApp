@@ -19,7 +19,8 @@ using Microsoft.EntityFrameworkCore;
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize (Roles = "Admin,Manager")]
+    [Authorize (Roles = "Admin")]
+
 
     public class SlideController : Controller
     {

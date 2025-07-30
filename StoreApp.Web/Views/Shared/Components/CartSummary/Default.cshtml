@@ -42,14 +42,14 @@
                 <span>@(Model.CalculateTotal().ToString("N0")) ₺</span>
             </li>
             
-            <li class="d-flex gap-2">
-                <a href="/cart" class="btn btn-outline-dark btn-sm w-50">
-                    <i class="bi bi-bag-check me-1"></i> Sepet
-                </a>
-                <a href="/checkout" class="btn btn-success btn-sm w-50">
-                    <i class="bi bi-credit-card me-1"></i> Ödeme
-                </a>
-            </li>
+                <li class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="/cart" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Sepete Dön
+                    </a>
+                    <a class="btn btn-success btn-sm" asp-controller="Order" asp-action="Checkout">
+                        <i class="bi bi-credit-card-2-front me-1"></i> Siparişi Tamamla
+                    </a>
+                </li>
 
 
 

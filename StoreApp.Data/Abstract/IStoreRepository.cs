@@ -17,6 +17,11 @@ namespace StoreApp.Data.Abstract
 
         IQueryable<Campaign> Campaigns { get; }
 
+        IQueryable<Address> Addresses { get; }
+
+        IQueryable<Order> Orders { get; }
+        IQueryable<OrderItem> OrderItems { get; }
+
         // PRODUCT VE CATEGORY İŞLEMLERİ
         void CreateProduct(Product entity);
 
@@ -53,6 +58,11 @@ namespace StoreApp.Data.Abstract
         List<Slide> GetActiveSlides();
 
 
+        // SITE SOSYAL AYARLARI
+        Task<SiteSocialAddressSetting?> GetSiteSocialSettingsAsync();
+        Task UpdateSiteSocialSettingsAsync(SiteSocialAddressSetting setting);
+
+
         // KAMPANYA İŞLEMLERİ
         Task<List<Campaign>> GetAllCampaignsAsync();
         Task<Campaign?> GetCampaignByIdAsync(int id);
@@ -62,5 +72,23 @@ namespace StoreApp.Data.Abstract
         Task AddCampaignAsync(Campaign campaign);
         Task UpdateCampaignAsync(Campaign campaign);
         Task DeleteCampaignAsync(Campaign campaign);
+
+        // ADRES İŞLEMLERİ
+        Task<List<Address>> GetAddressesByUserIdAsync(string userId);
+        Task<Address?> GetAddressByIdAsync(int id);
+        Task AddAddressAsync(Address address);
+        Task UpdateAddressAsync(Address address);
+        Task DeleteAddressAsync(Address address);
+
+        // SİPARİŞ İŞLEMLERİ
+        Task<Order?> GetOrderByIdAsync(int id);
+        Task<List<Order>> GetOrdersByUserIdAsync(string userId);
+        Task<List<Order>> GetAllOrdersAsync(); // admin için
+        Task AddOrderAsync(Order order);
+
+        Task CreateOrderAsync(Order order);
+
+        
+
     }
 }

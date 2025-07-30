@@ -26,31 +26,7 @@
 
 <footer class="bg-body-tertiary text-dark py-5 mt-5 border-top">
     <div class="container">
-        <div class="row g-5 justify-content-center text-center">
-
-
-            <div class="col-md-6 text-center">
-                <h6 class="fw-bold mb-3 mx-3">Müşteri Hizmetleri</h6>
-                <div class="d-flex flex-column align-items-center">
-
-                    <div>
-                        <span class="mx-3"><i class="bi bi-telephone fs-4 mb-2"></i></span><a href="tel:08502221500" class="text-dark text-decoration-underline">0212 212 12 12</a>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-6 text-center">
-                <h6 class="fw-bold mb-3">Bizi Takip Edin</h6>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-youtube"></i></a>
-                </div>
-            </div>
-
-        </div>
+        @await Component.InvokeAsync("SiteSocial")
     </div>
 </footer>
 
