@@ -11,7 +11,7 @@ namespace StoreApp.Web.Areas.Admin.Models
 {
     public class ProductCreateViewModel
     {
-         public int Id { get; set; }
+        public int Id { get; set; }
 
         [Required(ErrorMessage = "İsim alanı zorunludur.")]
         public string Name { get; set; }
@@ -35,7 +35,7 @@ namespace StoreApp.Web.Areas.Admin.Models
         [Required(ErrorMessage = "En az bir kategori seçilmelidir.")]
         public List<int> SelectedCategoryIds { get; set; } = new();
 
-        
+
         public List<Category>? AllCategories { get; set; }
     }
 }

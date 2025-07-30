@@ -8,7 +8,7 @@ namespace StoreApp.Data.Concrete
 
         public string? Image { get; set; }
 
-        public List<Product> Products { get; set; } = new();
+        public List<ProductCategory> ProductCategories { get; set; } = new();
 
 
 

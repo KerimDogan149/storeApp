@@ -31,6 +31,6 @@ namespace StoreApp.Web.Areas.Admin.Models
         [DataType(DataType.Password)]
         [Compare("NewPassword", ErrorMessage = "Şifreler eşleşmiyor.")]
         public string? ConfirmPassword { get; set; }
-        
+
     }
 }

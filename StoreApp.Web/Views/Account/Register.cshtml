@@ -9,7 +9,7 @@
     <form asp-action="Register" method="post">
         <div asp-validation-summary="All" class="text-danger"></div>
 
-                <div class="mb-3">
+        <div class="mb-3">
             <label asp-for="UserName" class="form-label"></label>
             <input asp-for="UserName" class="form-control" />
             <span asp-validation-for="UserName" class="text-danger"></span>
@@ -35,5 +35,3 @@
         <button type="submit" class="btn btn-primary">Kayıt Ol</button>
     </form>
 </div>
-
-

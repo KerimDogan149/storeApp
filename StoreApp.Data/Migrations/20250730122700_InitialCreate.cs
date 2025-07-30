@@ -524,12 +524,6 @@ namespace StoreApp.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_Url",
-                table: "Categories",
-                column: "Url",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
                 column: "OrderId");

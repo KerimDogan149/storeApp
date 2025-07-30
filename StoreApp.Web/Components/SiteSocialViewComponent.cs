@@ -13,20 +13,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace StoreApp.Web.Components
 {
-public class SiteSocialViewComponent : ViewComponent
-{
-    private readonly IStoreRepository _storeRepository;
-
-    public SiteSocialViewComponent(IStoreRepository storeRepository)
+    public class SiteSocialViewComponent : ViewComponent
     {
-        _storeRepository = storeRepository;
-    }
+        private readonly IStoreRepository _storeRepository;
 
-    public async Task<IViewComponentResult> InvokeAsync()
-    {
-        var setting = await _storeRepository.GetSiteSocialSettingsAsync();
-        return View(setting);
+        public SiteSocialViewComponent(IStoreRepository storeRepository)
+        {
+            _storeRepository = storeRepository;
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var setting = await _storeRepository.GetSiteSocialSettingsAsync();
+            return View(setting);
+        }
     }
-}
 
 }

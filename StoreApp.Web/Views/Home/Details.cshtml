@@ -3,7 +3,6 @@
 
 <div class="container my-5">
     <div class="row g-5 align-items-start">
-        <!-- Ürün Görseli -->
         <div class="col-md-6 text-center">
             <div class="border rounded shadow-sm p-3 bg-white">
                 <img src="~/img/products/@Model.Image" 
@@ -13,11 +12,9 @@
             </div>
         </div>
 
-        <!-- Ürün Bilgileri -->
         <div class="col-md-6">
         <h2 class="fw-bold">@Model.Name</h2>
 
-        <!-- Öne Çıkan & Çok Satan Etiketleri -->
         <div class="mb-2 d-flex gap-2">
             @if (Model.IsFeatured)
             {
@@ -49,16 +46,17 @@
                 <i class="bi bi-shield-lock"></i> Güvenli Ödeme
             </div>
 
-            @if (Model.Categories?.Any() == true)
+            @if (Model.ProductCategories?.Any() == true)
             {
                 <div class="mb-3">
                     <strong>Kategoriler:</strong>
-                    @foreach (var c in Model.Categories)
+                    @foreach (var pc in Model.ProductCategories)
                     {
-                        <span class="badge bg-secondary me-1">@c.Name</span>
+                        <span class="badge bg-secondary me-1">@pc.Category?.Name</span>
                     }
                 </div>
             }
+
 
             <div class="d-grid gap-2 d-md-block">
                 <form method="post"class="d-inline" asp-page="/Cart">

@@ -50,7 +50,7 @@
         <div class="mb-3">
             <label class="form-label">Kategoriler</label>
             <select asp-for="SelectedCategoryIds" asp-items="@(new MultiSelectList(Model.AllCategories, "Id", "Name"))"
-                    class="form-select" multiple size="6"></select>
+                class="form-select" multiple size="6"></select>
             <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
         </div>
 

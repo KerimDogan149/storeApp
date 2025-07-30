@@ -18,7 +18,7 @@ namespace StoreApp.Web.Models
         [Required(ErrorMessage = "Soyad alanı boş bırakılamaz.")]
         public string LastName { get; set; }
 
-        
+
         [Display(Name = "Kullanıcı Adı")]
         [Required(ErrorMessage = "Kullanıcı adı zorunludur.")]
         public string UserName { get; set; }
@@ -30,6 +30,6 @@ namespace StoreApp.Web.Models
         [Display(Name = "E-Posta")]
         public string Email { get; set; }
     }
-    
-    
+
+
 }

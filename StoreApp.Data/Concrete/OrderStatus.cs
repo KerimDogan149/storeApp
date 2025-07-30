@@ -21,6 +21,9 @@ namespace StoreApp.Data.Concrete
         IadeTalebinde = 3,
 
         [Display(Name = "İade Edildi")]
-        IadeEdildi = 4
+        IadeEdildi = 4,
+
+        [Display(Name = "İptal Edildi")]
+        IptalEdildi = 5
     }
 }

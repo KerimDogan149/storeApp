@@ -59,7 +59,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Email kontrolü
             var existingUser = await _userManager.FindByEmailAsync(model.Email);
             if (existingUser != null)
             {
@@ -67,7 +66,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // Kullanıcı adı kontrolü
             var existingUserName = await _userManager.FindByNameAsync(model.UserName);
             if (existingUserName != null)
             {
@@ -128,7 +126,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             if (user == null)
                 return NotFound();
 
-            // Kullanıcı adı başka biri tarafından kullanılıyor mu?
             var userNameOwner = await _userManager.FindByNameAsync(model.UserName);
             if (userNameOwner != null && userNameOwner.Id != user.Id)
             {
@@ -136,7 +133,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // Email başka biri tarafından kullanılıyor mu?
             var emailOwner = await _userManager.FindByEmailAsync(model.Email);
             if (emailOwner != null && emailOwner.Id != user.Id)
             {
@@ -144,7 +140,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // Bilgileri güncelle
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.UserName = model.UserName;
@@ -160,7 +155,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // Şifre güncelleme isteği varsa
             if (!string.IsNullOrEmpty(model.NewPassword))
             {
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);

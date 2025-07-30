@@ -7,22 +7,22 @@ namespace StoreApp.Data.Entities
 {
     public class Campaign
     {
-    public int Id { get; set; }
+        public int Id { get; set; }
 
-    public string Title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
-    public string? SubTitle { get; set; }
+        public string? SubTitle { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
-    public string? Link { get; set; }
+        public string? Link { get; set; }
 
-    public string Url { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
 
-    public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = true;
 
 
-    public string? Image { get; set; }
+        public string? Image { get; set; }
 
     }
 }

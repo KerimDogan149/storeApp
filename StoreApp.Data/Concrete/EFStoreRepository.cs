@@ -36,8 +36,9 @@ namespace StoreApp.Data.Concrete
         public IQueryable<Order> Orders => _context.Orders;
         public IQueryable<OrderItem> OrderItems => _context.OrderItems;
 
+        public IQueryable<ProductCategory> ProductCategories => _context.ProductCategories;
 
-
+        // PRODUCT VE CATEGORY İŞLEMLERİ
         public void CreateProduct(Product entity)
         {
             throw new NotImplementedException();
@@ -49,11 +50,14 @@ namespace StoreApp.Data.Concrete
             {
                 return _context.Products.Count();
             }
+
             return _context.Products
-                .Include(p => p.Categories)
-                .Where(p => p.Categories.Any(c => c.Url == category))
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .Where(p => p.ProductCategories.Any(pc => pc.Category.Url == category))
                 .Count();
         }
+
 
         public IEnumerable<Product> GetProductsByCategory(string category, int page, int pageSize)
         {
@@ -61,12 +65,21 @@ namespace StoreApp.Data.Concrete
 
             if (!string.IsNullOrEmpty(category))
             {
-                products = products.Include(p => p.Categories).Where(p => p.Categories.Any(c => c.Url == category));
+                products = products
+                    .Include(p => p.ProductCategories)
+                        .ThenInclude(pc => pc.Category)
+                    .Where(p => p.ProductCategories.Any(pc => pc.Category.Url == category));
             }
 
-            return products.Skip((page - 1) * pageSize).Take(pageSize);
+            return products
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize);
+        }
 
-
+        public async Task RemoveProductCategoriesAsync(IEnumerable<ProductCategory> items)
+        {
+            _context.ProductCategories.RemoveRange(items);
+            await _context.SaveChangesAsync();
         }
 
         public IEnumerable<Product> GetFeaturedProducts()
@@ -124,6 +137,8 @@ namespace StoreApp.Data.Concrete
                 await _context.SaveChangesAsync();
             }
         }
+
+        //SLİDE İŞLEMLERİ
         public List<Slide> GetActiveSlides()
         {
             return _context.Slides
@@ -162,7 +177,7 @@ namespace StoreApp.Data.Concrete
             await _context.SaveChangesAsync();
         }
 
-        //Campaign
+        //Kampanya
 
         public async Task<List<Campaign>> GetAllCampaignsAsync()
         {
@@ -244,14 +259,12 @@ namespace StoreApp.Data.Concrete
 
         //Sipariş İşlemleri
 
-        // Sipariş Ekleme
         public async Task AddOrderAsync(Order order)
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
         }
 
-        // Tek bir siparişi id’ye göre getir
         public async Task<Order?> GetOrderByIdAsync(int id)
         {
             return await _context.Orders
@@ -262,7 +275,6 @@ namespace StoreApp.Data.Concrete
                 .FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        // Belirli bir kullanıcıya ait siparişleri getir
         public async Task<List<Order>> GetOrdersByUserIdAsync(string userId)
         {
             return await _context.Orders
@@ -273,7 +285,6 @@ namespace StoreApp.Data.Concrete
                 .ToListAsync();
         }
 
-        // Admin için tüm siparişleri getir
         public async Task<List<Order>> GetAllOrdersAsync()
         {
             return await _context.Orders
@@ -284,7 +295,7 @@ namespace StoreApp.Data.Concrete
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
-        
+
         public async Task CreateOrderAsync(Order order)
         {
             if (order == null || order.OrderItems == null || !order.OrderItems.Any())
@@ -302,7 +313,10 @@ namespace StoreApp.Data.Concrete
 
 
 
+
+
+
     }
 
-    
+
 }

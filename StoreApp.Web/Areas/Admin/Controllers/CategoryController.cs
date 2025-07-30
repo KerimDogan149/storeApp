@@ -21,7 +21,7 @@ using StoreApp.Web.Areas.Admin.Models;
 
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
-    [Authorize (Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
 
     [Area("Admin")]
 
@@ -67,115 +67,115 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             return View(model);
         }
 
-            [HttpGet]
-            public IActionResult Edit(int id)
-            {
-                var category = _repository.Categories
-                    .Include(c => c.Products)
-                    .FirstOrDefault(c => c.Id == id);
-
-                if (category == null)
-                {
-                    return NotFound();
-                }
-
-                var allProducts = _repository.Products.ToList();
-
-                var model = new CategoryEditViewModel
-                {
-                    Id = category.Id,
-                    Name = category.Name,
-                    Url = category.Name.ToUrlSlug(),
-                    Image = category.Image,
-                    AllProducts = allProducts,
-                    SelectedProductIds = category.Products.Select(p => p.Id).ToList()
-                };
-
-                return View(model);
-            }
-
-
-            [HttpPost]
-            public async Task<IActionResult> Edit(CategoryEditViewModel model)
-            {
-                if (ModelState.IsValid)
-                {
-                    var expectedUrl = model.Name.ToUrlSlug();
-                    if (model.Url != expectedUrl)
-                    {
-                        ModelState.AddModelError("Url", "Sisteme müdahale etmeyiniz.");
-                        model.Url = expectedUrl;
-                        model.AllProducts = _repository.Products.ToList();
-                        return View(model);
-                    }
-
-                    var category = _repository.Categories
-                        .Include(c => c.Products)
-                        .FirstOrDefault(c => c.Id == model.Id);
-
-                    if (category == null)
-                    {
-                        return NotFound();
-                    }
-
-                        var removedProductIds = category.Products
-                        .Select(p => p.Id)
-                        .Except(model.SelectedProductIds)
-                        .ToList();
-
-                    foreach (var removedProductId in removedProductIds)
-                    {
-                        var product = _repository.Products
-                            .Include(p => p.Categories)
-                            .FirstOrDefault(p => p.Id == removedProductId);
-
-                        if (product != null && product.Categories.Count <= 1)
-                        {
-                            ModelState.AddModelError("", $"'{product.Name}' ürünü yalnızca bu kategoriye sahiptir. Bu ürünü kategorisiz bırakamazsınız.");
-                            model.AllProducts = _repository.Products.ToList();
-                            model.SelectedProductIds = category.Products.Select(p => p.Id).ToList();
-
-
-
-                            return View(model);
-                        }
-                    }
-
-                    category.Name = model.Name;
-                    category.Url = expectedUrl;
-                    category.Image = "default.png";
-
-                    category.Products.Clear();
-                    foreach (var productId in model.SelectedProductIds)
-                    {
-                        var product = _repository.Products.FirstOrDefault(p => p.Id == productId);
-                        if (product != null)
-                        {
-                            category.Products.Add(product);
-                        }
-                    }
-
-                    await _repository.UpdateCategoryAsync(category);
-                    return RedirectToAction("Index");
-                }
-
-                model.AllProducts = _repository.Products.ToList(); 
-                return View(model);
-            }
-
-        [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        [HttpGet]
+        public IActionResult Edit(int id)
         {
             var category = _repository.Categories
-                                    .Include(c => c.Products)
-                                    .FirstOrDefault(c => c.Id == id);
+                .Include(c => c.ProductCategories)
+                    .ThenInclude(pc => pc.Product)
+                .FirstOrDefault(c => c.Id == id);
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            if (category.Products.Any())
+            var allProducts = _repository.Products.ToList();
+
+            var model = new CategoryEditViewModel
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Url = category.Name.ToUrlSlug(),
+                Image = category.Image,
+                AllProducts = allProducts,
+                SelectedProductIds = category.ProductCategories.Select(pc => pc.ProductId).ToList()
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(CategoryEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var expectedUrl = model.Name.ToUrlSlug();
+                if (model.Url != expectedUrl)
+                {
+                    ModelState.AddModelError("Url", "Sisteme müdahale etmeyiniz.");
+                    model.Url = expectedUrl;
+                    model.AllProducts = _repository.Products.ToList();
+                    return View(model);
+                }
+
+                var category = _repository.Categories
+                    .Include(c => c.ProductCategories)
+                    .FirstOrDefault(c => c.Id == model.Id);
+
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                var removedProductIds = category.ProductCategories
+                    .Select(pc => pc.ProductId)
+                    .Except(model.SelectedProductIds)
+                    .ToList();
+
+                foreach (var removedProductId in removedProductIds)
+                {
+                    var product = _repository.Products
+                        .Include(p => p.ProductCategories)
+                        .FirstOrDefault(p => p.Id == removedProductId);
+
+                    if (product != null && product.ProductCategories.Count <= 1)
+                    {
+                        ModelState.AddModelError("", $"'{product.Name}' ürünü yalnızca bu kategoriye sahiptir. Bu ürünü kategorisiz bırakamazsınız.");
+
+                        model.AllProducts = _repository.Products.ToList();
+                        model.SelectedProductIds = category.ProductCategories.Select(pc => pc.ProductId).ToList();
+                        return View(model);
+                    }
+                }
+
+                category.Name = model.Name;
+                category.Url = expectedUrl;
+                category.Image = "default.png";
+
+                await _repository.RemoveProductCategoriesAsync(category.ProductCategories);
+
+                category.ProductCategories = model.SelectedProductIds
+                    .Select(pid => new ProductCategory
+                    {
+                        ProductId = pid,
+                        CategoryId = category.Id
+                    }).ToList();
+
+                await _repository.UpdateCategoryAsync(category);
+                return RedirectToAction("Index");
+            }
+
+            model.AllProducts = _repository.Products.ToList();
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var category = _repository.Categories
+                .Include(c => c.ProductCategories)
+                .ThenInclude(pc => pc.Product)
+                .FirstOrDefault(c => c.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            if (category.ProductCategories.Any())
             {
                 TempData["error"] = "Bu kategoriye bağlı ürünler var. Önce o ürünleri silmelisiniz.";
                 return RedirectToAction("Index");

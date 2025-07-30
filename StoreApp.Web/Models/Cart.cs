@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using StoreApp.Data.Concrete;
 using StoreApp.Web.Models;
-using StoreApp.Data.Abstract; 
+using StoreApp.Data.Abstract;
 
 
 namespace StoreApp.Web.Models
@@ -36,7 +36,7 @@ namespace StoreApp.Web.Models
         {
             return Items.Sum(item => item.Product.Price * item.Quantity);
         }
-        
+
         public void Clear()
         {
             Items.Clear();
@@ -48,7 +48,7 @@ namespace StoreApp.Web.Models
         public int CartItemId { get; set; }
 
         public Product Product { get; set; } = new Product();
-        
+
         public int Quantity { get; set; }
     }
 }

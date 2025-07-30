@@ -1,0 +1,128 @@
+@model IEnumerable<StoreApp.Data.Concrete.Order>
+@using StoreApp.Data.Concrete
+@using StoreApp.Data.Helpers
+@{
+    ViewData["Title"] = "Siparişler";
+    var filter = ViewBag.Filter as StoreApp.Web.Areas.Admin.Models.OrderFilterViewModel;
+
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-warning">@error.ErrorMessage</div>
+    }
+}
+<form method="get">
+    <div class="row g-2 mb-3 align-items-end">
+
+        <div class="col-md-2">
+            <input type="text" name="UserName" class="form-control" placeholder="Kullanıcı Adı"
+                value="@filter?.UserName" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="text" name="ProductName" class="form-control" placeholder="Ürün Adı"
+                value="@filter?.ProductName" />
+        </div>
+
+        <div class="col-md-2">
+            <select name="CategoryId" class="form-select">
+                <option value="">Kategori (Tümü)</option>
+                @foreach (var category in ViewBag.Categories as List<StoreApp.Data.Concrete.Category>)
+                {
+                    <option value="@category.Id" selected="@(filter?.CategoryId == category.Id)">
+                        @category.Name
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select name="Status" class="form-select">
+                <option value="">Durum (Tümü)</option>
+                @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                {
+                    <option value="@((int)status)" selected="@(filter?.Status == status)">
+                        @status.GetDisplayName()
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="StartDate" class="form-label">Başlangıç Tarihi</label>
+            <input type="date" name="StartDate" class="form-control"
+                value="@filter?.StartDate?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="col-md-2">
+            <label for="EndDate" class="form-label">Bitiş Tarihi</label>
+            <input type="date" name="EndDate" class="form-control" value="@filter?.EndDate?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="number" name="MinTotal" class="form-control" placeholder="Min ₺" value="@filter?.MinTotal" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="number" name="MaxTotal" class="form-control" placeholder="Max ₺" value="@filter?.MaxTotal" />
+        </div>
+        <div class="col-md-12 text-end mt-2">
+            <button type="submit" class="btn btn-primary">Filtrele</button>
+            <a href="@Url.Action("Index", "Order", new { area = "Admin" })"
+                class="btn btn-outline-secondary">Temizle</a>
+        </div>
+
+    </div>
+</form>
+
+
+
+<h2 class="fw-bold text-primary mb-4">Siparişler</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table table-bordered table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Kullanıcı</th>
+            <th>Tarih</th>
+            <th>Toplam</th>
+            <th>Durum</th>
+            <th class="text-center">İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.AppUser?.UserName</td>
+                <td>@order.OrderDate.ToString("dd MMM yyyy HH:mm")</td>
+                <td>@order.TotalAmount.ToString("N2") ₺</td>
+                <td>
+                    <span class="badge rounded-pill @order.Status.GetOrderStatusBadgeClass()">
+                        @order.Status.GetDisplayName()
+                    </span>
+                </td>
+                <td class="text-center">
+                    <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-info me-2">
+                        Detaylar
+                    </a>
+                    <a asp-action="UpdateStatus" asp-route-id="@order.Id" class="btn btn-sm btn-primary me-2">
+                        Durum Güncelle
+                    </a>
+                    <form asp-action="Delete" asp-route-id="@order.Id" method="post" class="d-inline"
+                        onsubmit="return confirm('Bu siparişi silmek istediğinize emin misiniz?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -7,46 +7,78 @@
         </a>
 
         @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-        {
-            <!-- Menü (Sadece Admin Girişliyse Görünsün) -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item mx-2">
-                    <a class="nav-link" asp-area="Admin" asp-controller="Category" asp-action="Index">
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <!-- Menü (Sadece Admin Girişliyse Görünsün) -->
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <!-- Ürün Yönetimi -->
+        <li class="nav-item dropdown mx-2">
+            <a class="nav-link dropdown-toggle" href="#" id="productManagementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-box-seam me-1"></i> Ürün Yönetimi
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="productManagementDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">
                         <i class="bi bi-tags me-1"></i> Kategoriler
                     </a>
                 </li>
-
-                <li class="nav-item mx-2">
-                    <a class="nav-link" asp-area="Admin" asp-controller="Product" asp-action="Index">
-                        <i class="bi bi-box-seam me-1"></i> Ürünler
-                    </a>
-                </li>
-
-                <li class="nav-item mx-2">
-                    <a class="nav-link" asp-area="Admin" asp-controller="Slide" asp-action="Index">
-                        <i class="bi bi-images me-1"></i> Slaytlar
-                    </a>
-                </li>
-
-                <li class="nav-item mx-2">
-                    <a class="nav-link" asp-area="Admin" asp-controller="Campaign" asp-action="Index">
-                        <i class="bi bi-megaphone me-1"></i> Kampanyalar
-                    </a>
-                </li>
-
-                <li class="nav-item mx-2">
-                    <a class="nav-link" asp-area="Admin" asp-controller="SiteSocialSettings" asp-action="SiteSocialSettings">
-                        <i class="bi bi-share-fill me-1"></i> Sosyal Ayarlar
-                    </a>
-                </li>
-
-                                <li class="nav-item mx-2">
-                    <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">
-                        <i class="bi bi-people me-1"></i> Kullanıcılar
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">
+                        <i class="bi bi-box2-heart me-1"></i> Ürünler
                     </a>
                 </li>
             </ul>
-        }
+        </li>
+
+        <!-- Sipariş Yönetimi -->
+        <li class="nav-item dropdown mx-2">
+            <a class="nav-link dropdown-toggle" href="#" id="orderManagementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-receipt me-1"></i> Sipariş Yönetimi
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="orderManagementDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Order" asp-action="Index">
+                        <i class="bi bi-clipboard-check me-1"></i> Siparişler
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Site Yönetimi -->
+        <li class="nav-item dropdown mx-2">
+            <a class="nav-link dropdown-toggle" href="#" id="siteManagementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-gear me-1"></i> Site Yönetimi
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="siteManagementDropdown">
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Slide" asp-action="Index">
+                        <i class="bi bi-images me-1"></i> Slaytlar
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Campaign" asp-action="Index">
+                        <i class="bi bi-megaphone me-1"></i> Kampanyalar
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="SiteSocialSettings" asp-action="SiteSocialSettings">
+                        <i class="bi bi-share-fill me-1"></i> Sosyal Ayarlar
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Kullanıcılar -->
+        <li class="nav-item mx-2">
+            <a class="nav-link" asp-area="Admin" asp-controller="User" asp-action="Index">
+                <i class="bi bi-people me-1"></i> Kullanıcılar
+            </a>
+        </li>
+
+    </ul>
+}
+
 
 
         <!-- Sağ Kısım -->

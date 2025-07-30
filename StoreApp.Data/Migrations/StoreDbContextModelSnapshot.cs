@@ -164,9 +164,6 @@ namespace StoreApp.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Url")
-                        .IsUnique();
-
                     b.ToTable("Categories");
 
                     b.HasData(
@@ -1301,17 +1298,21 @@ namespace StoreApp.Data.Migrations
 
             modelBuilder.Entity("StoreApp.Data.Concrete.ProductCategory", b =>
                 {
-                    b.HasOne("StoreApp.Data.Concrete.Category", null)
-                        .WithMany()
+                    b.HasOne("StoreApp.Data.Concrete.Category", "Category")
+                        .WithMany("ProductCategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StoreApp.Data.Concrete.Product", null)
-                        .WithMany()
+                    b.HasOne("StoreApp.Data.Concrete.Product", "Product")
+                        .WithMany("ProductCategories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("StoreApp.Data.Entities.Address", b =>
@@ -1325,9 +1326,19 @@ namespace StoreApp.Data.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("StoreApp.Data.Concrete.Category", b =>
+                {
+                    b.Navigation("ProductCategories");
+                });
+
             modelBuilder.Entity("StoreApp.Data.Concrete.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("StoreApp.Data.Concrete.Product", b =>
+                {
+                    b.Navigation("ProductCategories");
                 });
 
             modelBuilder.Entity("StoreApp.Data.Entities.AppUser", b =>

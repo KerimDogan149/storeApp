@@ -3,13 +3,12 @@
 <div class="container mt-5">
     <h2 class="mb-4">Hesap Bilgilerim</h2>
 
-    @* Başarı mesajı *@
+
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success">@TempData["SuccessMessage"]</div>
     }
 
-    @* ModelState hataları *@
     @if (!ViewData.ModelState.IsValid)
     {
         <div class="alert alert-danger">
@@ -23,7 +22,7 @@
     }
 
     <form asp-action="AccountInfo" asp-controller="Account" method="post" novalidate>
-                <div class="mb-3">
+        <div class="mb-3">
             <label asp-for="UserName" class="form-label"></label>
             <input asp-for="UserName" class="form-control" />
             <span asp-validation-for="UserName" class="text-danger"></span>
@@ -55,4 +54,3 @@
         <button type="submit" class="btn btn-primary">Güncelle</button>
     </form>
 </div>
-

@@ -21,13 +21,14 @@ else
 {
     <form asp-action="Checkout" method="post">
         <div class="row">
-            <!-- Adres Seçimi -->
+
             <div class="col-md-6">
                 <h5 class="fw-bold mb-3">Teslimat Adresi Seçimi</h5>
 
                 <div class="mb-3">
                     <label for="SelectedAddressId" class="form-label">Adres Seçin</label>
-                    <select id="SelectedAddressId" name="SelectedAddressId" class="form-select" onchange="loadAddressDetails()">
+                    <select id="SelectedAddressId" name="SelectedAddressId" class="form-select"
+                        onchange="loadAddressDetails()">
                         @foreach (var address in Model.Addresses)
                         {
                             <option value="@address.Id">@address.Title</option>
@@ -39,12 +40,12 @@ else
                     <small class="text-muted">Adres bilgileri yüklenecek...</small>
                 </div>
 
-                <!-- Ödeme Yöntemi (şimdilik pasif) -->
                 <div class="mt-4">
                     <h5 class="fw-bold mb-3">Ödeme Yöntemleri</h5>
                     <div class="border rounded p-3 bg-white shadow-sm">
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked disabled>
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" checked
+                                disabled>
                             <label class="form-check-label fw-bold" for="creditCard">
                                 <i class="bi bi-credit-card-2-front me-1"></i> Kredi Kartı
                             </label>
@@ -63,31 +64,28 @@ else
                 </div>
             </div>
 
-            <!-- Sepet Özeti -->
             <div class="col-md-6">
-<h5 class="fw-bold mb-3">Sepet Özeti</h5>
+                <h5 class="fw-bold mb-3">Sepet Özeti</h5>
 
-<ul class="list-group mb-3">
-    @foreach (var item in Model.Cart.Items)
-    {
-        <li class="list-group-item d-flex align-items-center gap-3">
-            <img src="~/img/products/@item.Product.Image"
-                 alt="@item.Product.Name"
-                 class="rounded border"
-                 style="width: 60px; height: 60px; object-fit: contain;" />
-            <div class="flex-grow-1">
-                <div class="fw-semibold">@item.Product.Name</div>
-                <small class="text-muted">@item.Quantity x @($"{item.Product.Price:N0}") ₺</small>
-            </div>
-            <span class="fw-bold">@($"{item.Quantity * item.Product.Price:N0}") ₺</span>
-        </li>
-    }
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        <li class="list-group-item d-flex align-items-center gap-3">
+                            <img src="~/img/products/@item.Product.Image" alt="@item.Product.Name" class="rounded border"
+                                style="width: 60px; height: 60px; object-fit: contain;" />
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">@item.Product.Name</div>
+                                <small class="text-muted">@item.Quantity x @($"{item.Product.Price:N0}") ₺</small>
+                            </div>
+                            <span class="fw-bold">@($"{item.Quantity * item.Product.Price:N0}") ₺</span>
+                        </li>
+                    }
 
-    <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
-        <span>Toplam:</span>
-        <span>@Model.Cart.CalculateTotal().ToString("N0") ₺</span>
-    </li>
-</ul>
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+                        <span>Toplam:</span>
+                        <span>@Model.Cart.CalculateTotal().ToString("N0") ₺</span>
+                    </li>
+                </ul>
 
                 <div class="d-flex justify-content-end gap-2">
                     <a href="/cart" class="btn btn-outline-dark">
@@ -119,7 +117,6 @@ else
                 });
         }
 
-        // Sayfa yüklenince ilk adres bilgilerini getir
         document.addEventListener("DOMContentLoaded", function () {
             loadAddressDetails();
         });

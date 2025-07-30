@@ -9,7 +9,7 @@ public class ProductViewModel
     public string Url { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public string Image { get; set; } = string.Empty;
-    
+
     public bool IsFeatured { get; set; } = false;
     public bool IsBestSeller { get; set; } = false;
     public string Category { get; set; } = string.Empty;

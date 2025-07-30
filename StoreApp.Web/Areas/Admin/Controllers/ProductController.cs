@@ -23,7 +23,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace StoreApp.Web.Areas.Admin.Controllers
 {
-    [Authorize (Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
 
 
     [Area("Admin")]
@@ -37,34 +37,33 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             _repository = repository;
         }
 
-        public IActionResult Index(int? categoryId, string search,string isFeatured, string isBestSeller)
+        public IActionResult Index(int? categoryId, string search, string isFeatured, string isBestSeller)
         {
-            var products = _repository.Products.Include(p => p.Categories).AsQueryable();
+            var products = _repository.Products
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+                .AsQueryable();
 
             if (categoryId.HasValue)
             {
-                products = products.Where(p => p.Categories.Any(c => c.Id == categoryId.Value));
+                products = products.Where(p => p.ProductCategories.Any(pc => pc.CategoryId == categoryId.Value));
             }
+
             if (!string.IsNullOrEmpty(search))
             {
                 products = products.Where(p => p.Name.ToLower().Contains(search.ToLower()));
             }
-            
-                if (!string.IsNullOrEmpty(isFeatured))
-                {
-                    bool featured = isFeatured == "true";
-                    products = products.Where(p => p.IsFeatured == featured);
-                }
 
-                if (!string.IsNullOrEmpty(isBestSeller))
-                {
-                    bool bestSeller = isBestSeller == "true";
-                    products = products.Where(p => p.IsBestSeller == bestSeller);
-                }
-
-            if (!string.IsNullOrWhiteSpace(search))
+            if (!string.IsNullOrEmpty(isFeatured))
             {
-                products = products.Where(p => p.Name.ToLower().Contains(search.ToLower()));
+                bool featured = isFeatured == "true";
+                products = products.Where(p => p.IsFeatured == featured);
+            }
+
+            if (!string.IsNullOrEmpty(isBestSeller))
+            {
+                bool bestSeller = isBestSeller == "true";
+                products = products.Where(p => p.IsBestSeller == bestSeller);
             }
 
             var categories = _repository.Categories.ToList();
@@ -74,7 +73,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             ViewBag.Search = search;
             ViewBag.IsFeaturedFilter = isFeatured;
             ViewBag.IsBestSellerFilter = isBestSeller;
-
 
             return View(products.ToList());
         }
@@ -112,6 +110,7 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("ImageFile", "Görsel boyutu 2 MB'tan büyük olamaz.");
                 }
             }
+
             if (ModelState.IsValid)
             {
                 var url = model.Name.ToUrlSlug();
@@ -132,16 +131,16 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                     IsFeatured = model.IsFeatured,
                     IsBestSeller = model.IsBestSeller,
                     Image = "default.png",
-                    Categories = new List<Category>()
+                    ProductCategories = new List<ProductCategory>()
                 };
 
                 foreach (var catId in model.SelectedCategoryIds)
                 {
-                    var category = _repository.Categories.FirstOrDefault(c => c.Id == catId);
-                    if (category != null)
+                    product.ProductCategories.Add(new ProductCategory
                     {
-                        product.Categories.Add(category);
-                    }
+                        Product = product,
+                        CategoryId = catId
+                    });
                 }
 
                 if (model.ImageFile != null)
@@ -164,11 +163,13 @@ namespace StoreApp.Web.Areas.Admin.Controllers
         }
 
 
+
         [HttpGet]
         public IActionResult Edit(int id)
         {
             var product = _repository.Products
-                .Include(p => p.Categories)
+                .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
                 .FirstOrDefault(p => p.Id == id);
 
             if (product == null)
@@ -186,13 +187,12 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                 IsBestSeller = product.IsBestSeller,
                 Description = product.Description,
                 Image = product.Image,
-                SelectedCategoryIds = product.Categories.Select(c => c.Id).ToList(),
+                SelectedCategoryIds = product.ProductCategories.Select(pc => pc.CategoryId).ToList(),
                 AllCategories = _repository.Categories.ToList()
             };
 
             return View(model);
         }
-
         [HttpPost]
         public async Task<IActionResult> Edit(ProductCreateViewModel model)
         {
@@ -220,7 +220,7 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var product = _repository.Products
-                    .Include(p => p.Categories)
+                    .Include(p => p.ProductCategories)
                     .FirstOrDefault(p => p.Id == model.Id);
 
                 if (product == null)
@@ -255,15 +255,14 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                     product.Image = imageName;
                 }
 
-                product.Categories.Clear();
-                foreach (var catId in model.SelectedCategoryIds)
-                {
-                    var category = _repository.Categories.FirstOrDefault(c => c.Id == catId);
-                    if (category != null)
+                await _repository.RemoveProductCategoriesAsync(product.ProductCategories);
+
+                product.ProductCategories = model.SelectedCategoryIds
+                    .Select(catId => new ProductCategory
                     {
-                        product.Categories.Add(category);
-                    }
-                }
+                        ProductId = product.Id,
+                        CategoryId = catId
+                    }).ToList();
 
                 await _repository.UpdateProductAsync(product);
                 return RedirectToAction("Index");
@@ -272,11 +271,13 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             model.AllCategories = _repository.Categories.ToList();
             return View(model);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = _repository.Products.FirstOrDefault(p => p.Id == id);
+            var product = _repository.Products
+                .Include(p => p.ProductCategories)
+                .FirstOrDefault(p => p.Id == id);
 
             if (product == null)
             {
@@ -292,10 +293,12 @@ namespace StoreApp.Web.Areas.Admin.Controllers
                 }
             }
 
+            await _repository.RemoveProductCategoriesAsync(product.ProductCategories);
+
             await _repository.DeleteProductAsync(product.Id);
+
             return RedirectToAction("Index");
         }
-
 
 
 

@@ -38,8 +38,8 @@ namespace StoreApp.Web.Models
         public List<SelectListItem> Districts { get; set; } = new();
 
         public List<SelectListItem> Neighborhoods { get; set; } = new();
-        
 
-        
+
+
     }
 }

@@ -41,11 +41,11 @@ namespace StoreApp.Data.Entities
         [Required(ErrorMessage = "Adres başlığı zorunludur.")]
         public string Title { get; set; }
 
-        [Required] // FK ilişki için zorunlu
+        [Required]
         public string AppUserId { get; set; }
 
         [ForeignKey("AppUserId")]
         public AppUser AppUser { get; set; }
-    
+
     }
 }

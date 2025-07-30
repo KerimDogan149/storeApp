@@ -13,19 +13,19 @@ namespace StoreApp.Web.Components
         private readonly IStoreRepository _storeRepository;
         public CategoriesListViewComponent(IStoreRepository storeRepository)
         {
-            _storeRepository= storeRepository;
+            _storeRepository = storeRepository;
         }
         public IViewComponentResult Invoke()
         {
             ViewBag.SelectedCategory = RouteData?.Values["category"]?.ToString();
- 
-            return View(_storeRepository.Categories.Select(p=> new CategoryViewModel
+
+            return View(_storeRepository.Categories.Select(p => new CategoryViewModel
             {
                 Id = p.Id,
                 Name = p.Name,
                 Url = p.Url,
-                Image = p.Image 
-            }).ToList()); 
+                Image = p.Image
+            }).ToList());
         }
     }
 }

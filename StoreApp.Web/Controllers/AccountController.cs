@@ -139,7 +139,7 @@ namespace StoreApp.Web.Controllers
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                UserName = user.UserName,  
+                UserName = user.UserName,
                 PhoneNumber = user.PhoneNumber,
                 Email = user.Email
             };
@@ -428,35 +428,102 @@ namespace StoreApp.Web.Controllers
                 .ToList());
         }
 
-            [Authorize]
-        public async Task<IActionResult> Orders()
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Orders(UserOrdersFilterViewModel filter)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return RedirectToAction("Login", "Account");
 
-            var orders = await _storeRepository.Orders
+            if (filter.StartDate.HasValue && filter.EndDate.HasValue)
+            {
+                if (filter.StartDate > filter.EndDate)
+                {
+                    ModelState.AddModelError("", "Başlangıç tarihi, bitiş tarihinden sonra olamaz.");
+                }
+            }
+            if (filter.MinTotal.HasValue && filter.MaxTotal.HasValue)
+            {
+                if (filter.MinTotal > filter.MaxTotal)
+                {
+                    ModelState.AddModelError("", "Minimum tutar, maksimum tutardan büyük olamaz.");
+                }
+            }
+
+
+            var query = _storeRepository.Orders
                 .Where(o => o.AppUserId == user.Id)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.ProductCategories)
                 .Include(o => o.Address)
+                .AsQueryable();
+
+
+            if (ModelState.IsValid)
+            {
+                if (filter.Status.HasValue)
+                {
+                    query = query.Where(o => o.Status == filter.Status.Value);
+                }
+
+                if (filter.StartDate.HasValue)
+                {
+                    query = query.Where(o => o.OrderDate >= filter.StartDate.Value);
+                }
+
+                if (filter.EndDate.HasValue)
+                {
+                    query = query.Where(o => o.OrderDate <= filter.EndDate.Value);
+                }
+
+                if (filter.MinTotal.HasValue)
+                {
+                    query = query.Where(o => o.TotalAmount >= filter.MinTotal.Value);
+                }
+
+                if (filter.MaxTotal.HasValue)
+                {
+                    query = query.Where(o => o.TotalAmount <= filter.MaxTotal.Value);
+                }
+
+                if (!string.IsNullOrEmpty(filter.ProductName))
+                {
+                    var lowered = filter.ProductName.ToLower();
+                    query = query.Where(o =>
+                        o.OrderItems.Any(oi => oi.Product.Name.ToLower().Contains(lowered)));
+                }
+
+                if (filter.CategoryId.HasValue)
+                {
+                    query = query.Where(o =>
+                        o.OrderItems.Any(oi =>
+                            oi.Product.ProductCategories.Any(pc => pc.CategoryId == filter.CategoryId)));
+                }
+            }
+
+            var orders = await query
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
             var model = orders
-                .Where(o => o != null && o.Address != null)
+                .Where(o => o.Address != null)
                 .Select(o => new OrderSummaryViewModel
                 {
                     OrderId = o.Id,
                     OrderDate = o.OrderDate,
                     TotalAmount = o.TotalAmount,
                     Address = o.Address,
-                    Items = o.OrderItems
+                    Items = o.OrderItems,
+                    Status = o.Status
                 }).ToList();
+
+            ViewBag.Filter = filter;
+            ViewBag.Categories = await _storeRepository.Categories.ToListAsync();
 
             return View(model);
         }
-
 
     }
 }

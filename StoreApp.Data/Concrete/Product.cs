@@ -16,7 +16,7 @@ namespace StoreApp.Data.Concrete
         public bool IsFeatured { get; set; } = false;
 
         public bool IsBestSeller { get; set; } = false;
-        public List<Category> Categories { get; set; } = new();
+        public List<ProductCategory> ProductCategories { get; set; } = new(); // ✅
 
         // Constructor ekliyoruz (Name verilince Url otomatik oluşsun)
         public Product()
@@ -25,7 +25,7 @@ namespace StoreApp.Data.Concrete
         public Product(string name)
         {
             Name = name;
-            Url = name.ToUrlSlug(); // Uzantıyı burada otomatik ayarlıyoruz
+            Url = name.ToUrlSlug();
         }
     }
 }

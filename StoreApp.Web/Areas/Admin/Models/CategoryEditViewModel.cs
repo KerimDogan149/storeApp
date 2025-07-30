@@ -24,6 +24,6 @@ namespace StoreApp.Web.Areas.Admin.Models
         public List<Product> AllProducts { get; set; } = new();
 
         public List<int> SelectedProductIds { get; set; } = new();
-        
+
     }
 }

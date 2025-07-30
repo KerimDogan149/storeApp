@@ -19,7 +19,7 @@ namespace StoreApp.Web.Components
         {
             _context = context;
         }
-        
+
         public IViewComponentResult Invoke()
         {
             var selectedCategoryIds = new List<int> { 1, 2, 3, 4 };

@@ -10,7 +10,6 @@
     <form asp-action="Edit" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-        @* Mevcut görsel *@
         @if (ViewBag.CurrentImage != null)
         {
             <div class="mb-3">
@@ -40,7 +39,7 @@
         <div class="mb-3">
             <label asp-for="Url" class="form-label">URL</label>
             <input asp-for="Url" class="form-control" id="Url" readonly
-                   style="background-color: #e9ecef; cursor: not-allowed;" />
+                style="background-color: #e9ecef; cursor: not-allowed;" />
             <span asp-validation-for="Url" class="text-danger small"></span>
         </div>
 

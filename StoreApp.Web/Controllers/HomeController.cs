@@ -66,10 +66,11 @@ public class HomeController : Controller
     {
         if (string.IsNullOrEmpty(url))
             return NotFound();
-
         var product = _storeRepository.Products
-            .Include(p => p.Categories)
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
             .FirstOrDefault(p => p.Url == url);
+
 
         if (product == null)
             return NotFound();
@@ -84,8 +85,9 @@ public class HomeController : Controller
         int pageSize = 12;
 
         var filteredProducts = _storeRepository.Products
-            .Include(p => p.Categories)
-            .Where(p => p.Categories.Any(c => c.Url.ToLower() == category.ToLower()))
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+            .Where(p => p.ProductCategories.Any(pc => pc.Category.Url.ToLower() == category.ToLower()))
             .ToList();
 
         var productViewModels = filteredProducts
@@ -99,9 +101,10 @@ public class HomeController : Controller
                 Description = p.Description,
                 Image = p.Image,
                 Price = p.Price,
-                Category = p.Categories.FirstOrDefault()?.Name ?? ""
+                Category = p.ProductCategories.FirstOrDefault()?.Category?.Name ?? ""
             })
             .ToList();
+
 
         int totalItems = filteredProducts.Count;
 
@@ -131,12 +134,10 @@ public class HomeController : Controller
         if (string.IsNullOrWhiteSpace(q))
             return RedirectToAction("Index");
 
-        // Veriyi önce belleğe alıyoruz (EF Core null işlemlerini SQL'e çeviremediği için)
         var matchedProducts = _storeRepository.Products
             .Where(p => p.Name.ToLower().Contains(q.ToLower()))
             .ToList();
 
-        // Sonrasında C# tarafında işliyoruz
         var products = matchedProducts
             .Select(p => new ProductViewModel
             {
@@ -146,9 +147,10 @@ public class HomeController : Controller
                 Description = p.Description,
                 Price = p.Price,
                 Image = p.Image,
-                Category = p.Categories.FirstOrDefault()?.Name ?? ""
+                Category = p.ProductCategories.FirstOrDefault()?.Category?.Name ?? ""
             })
             .ToList();
+
 
         var viewModel = new ProductListViewModel
         {
@@ -159,19 +161,19 @@ public class HomeController : Controller
         return View("Search", viewModel);
     }
 
-        [Route("campaign/{url}")]
-        public async Task<IActionResult> CampaignDetail(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return NotFound();
+    [Route("campaign/{url}")]
+    public async Task<IActionResult> CampaignDetail(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+            return NotFound();
 
-            var campaign = await _storeRepository.GetCampaignByUrlAsync(url);
+        var campaign = await _storeRepository.GetCampaignByUrlAsync(url);
 
-            if (campaign == null)
-                return NotFound();
+        if (campaign == null)
+            return NotFound();
 
-            return View("CampaignDetail", campaign);
-        }
+        return View("CampaignDetail", campaign);
+    }
 
 
 

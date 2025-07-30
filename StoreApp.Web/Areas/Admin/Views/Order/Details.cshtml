@@ -1,0 +1,99 @@
+@model StoreApp.Data.Concrete.Order
+@using StoreApp.Data.Concrete
+@using StoreApp.Data.Helpers
+
+@{
+    ViewData["Title"] = $"Sipariş Detayı - #{Model.Id}";
+}
+
+<h2 class="fw-bold text-primary mb-4">Sipariş Detayı - #@Model.Id</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-secondary">Sipariş Bilgileri</h5>
+                <p><strong>Sipariş Tarihi:</strong> @Model.OrderDate.ToString("dd MMM yyyy HH:mm")</p>
+                <p><strong>Durum:</strong>
+                    <span class="badge rounded-pill @Model.Status.GetOrderStatusBadgeClass()">
+                        @Model.Status.GetDisplayName()
+                    </span>
+                </p>
+                <p><strong>Toplam Tutar:</strong> @Model.TotalAmount.ToString("N2") ₺</p>
+                @if (!string.IsNullOrEmpty(Model.Note))
+                {
+                    <p><strong>Not:</strong> @Model.Note</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-secondary">Kullanıcı</h5>
+                <p><strong>Kullanıcı Adı:</strong> @Model.AppUser?.UserName</p>
+                <p><strong>Email:</strong> @Model.AppUser?.Email</p>
+                <p><strong>Telefon:</strong> @Model.AppUser?.PhoneNumber</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-secondary">Teslimat Adresi</h5>
+                <p><strong>Ad Soyad:</strong> @Model.Address?.FullName</p>
+                <p><strong>Telefon:</strong> @Model.Address?.PhoneNumber</p>
+                <p><strong>Adres Başlığı:</strong> @Model.Address?.Title</p>
+                <p><strong>İl / İlçe:</strong> @Model.Address?.Province / @Model.Address?.District</p>
+                <p><strong>Mahalle:</strong> @Model.Address?.Neighborhood</p>
+                <p><strong>Açık Adres:</strong> @Model.Address?.FullAddress</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title text-secondary">Sipariş Ürünleri</h5>
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ürün</th>
+                            <th>Adet</th>
+                            <th>Birim Fiyat</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="~/img/products/@item.Product.Image" width="60" height="60"
+                                            class="rounded shadow-sm border" />
+                                        <span>@item.Product?.Name</span>
+                                    </div>
+                                </td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price.ToString("N2") ₺</td>
+                                <td>@((item.Price * item.Quantity).ToString("N2")) ₺</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold">Genel Toplam:</td>
+                            <td class="fw-bold">@Model.TotalAmount.ToString("N2") ₺</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

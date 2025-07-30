@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using StoreApp.Data.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore; 
-using StoreApp.Data.Entities; 
+using Microsoft.EntityFrameworkCore;
+using StoreApp.Data.Entities;
 namespace StoreApp.Data.Concrete;
 
 public class StoreDbContext : IdentityDbContext<AppUser>
@@ -21,7 +21,7 @@ public class StoreDbContext : IdentityDbContext<AppUser>
     public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
 
     public DbSet<Slide> Slides => Set<Slide>();
-    
+
     public DbSet<Campaign> Campaigns => Set<Campaign>();
 
     public DbSet<Address> Addresses => Set<Address>();
@@ -29,7 +29,8 @@ public class StoreDbContext : IdentityDbContext<AppUser>
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
-    
+
+
 
     public DbSet<SiteSocialAddressSetting> SiteSocialAddressSettings => Set<SiteSocialAddressSetting>();
 
@@ -49,14 +50,16 @@ public class StoreDbContext : IdentityDbContext<AppUser>
         modelBuilder.Entity<ProductCategory>()
             .HasKey(pc => new { pc.ProductId, pc.CategoryId });
 
-        modelBuilder.Entity<Product>()
-            .HasMany(p => p.Categories)
-            .WithMany(c => c.Products)
-            .UsingEntity<ProductCategory>();
 
-        modelBuilder.Entity<Category>()
-            .HasIndex(c => c.Url)
-            .IsUnique();
+        modelBuilder.Entity<ProductCategory>()
+            .HasOne(pc => pc.Product)
+            .WithMany(p => p.ProductCategories)
+            .HasForeignKey(pc => pc.ProductId);
+
+        modelBuilder.Entity<ProductCategory>()
+            .HasOne(pc => pc.Category)
+            .WithMany(c => c.ProductCategories)
+            .HasForeignKey(pc => pc.CategoryId);
 
         modelBuilder.Entity<Product>().HasData(
             new List<Product>() {
@@ -219,16 +222,16 @@ public class StoreDbContext : IdentityDbContext<AppUser>
                 Link = "/kampanya/3"
             }
         });
-        
-            modelBuilder.Entity<SiteSocialAddressSetting>().HasData(new SiteSocialAddressSetting
-            {
-                Id = 1,
-                PhoneNumber = "0212 212 12 12",
-                FacebookUrl = "https://facebook.com/yourpage",
-                InstagramUrl = "https://instagram.com/yourpage",
-                TwitterUrl = "https://twitter.com/yourpage",
-                YoutubeUrl = "https://youtube.com/yourpage"
-            });
+
+        modelBuilder.Entity<SiteSocialAddressSetting>().HasData(new SiteSocialAddressSetting
+        {
+            Id = 1,
+            PhoneNumber = "0212 212 12 12",
+            FacebookUrl = "https://facebook.com/yourpage",
+            InstagramUrl = "https://instagram.com/yourpage",
+            TwitterUrl = "https://twitter.com/yourpage",
+            YoutubeUrl = "https://youtube.com/yourpage"
+        });
 
 
     }

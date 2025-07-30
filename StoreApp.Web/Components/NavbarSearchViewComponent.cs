@@ -15,6 +15,6 @@ namespace StoreApp.Web.Components
             return View();
         }
 
-        
+
     }
 }

@@ -38,7 +38,6 @@ public async Task<IActionResult> Index(string? status, int? order)
 {
     var slides = await _repository.GetAllSlidesAsync();
 
-    // Duruma göre filtreleme
     if (!string.IsNullOrEmpty(status))
     {
         if (status == "active")
@@ -47,13 +46,11 @@ public async Task<IActionResult> Index(string? status, int? order)
             slides = slides.Where(s => !s.IsActive).ToList();
     }
 
-    // Sıra numarasına göre filtreleme
     if (order.HasValue)
     {
         slides = slides.Where(s => s.Order == order.Value).ToList();
     }
 
-    // Sıralama: Aktifler önce, sonra sıra numarasına göre
     var orderedSlides = slides
         .OrderByDescending(s => s.IsActive)
         .ThenBy(s => s.Order)
@@ -80,21 +77,18 @@ public async Task<IActionResult> Index(string? status, int? order)
             var generatedSlug = "/" + model.Title?.ToUrlSlug();
 
 
-            // Link ile slug uyuşmuyorsa uyarı ver
             if (!string.IsNullOrEmpty(model.Link) && model.Link.ToUrlSlug() != generatedSlug)
             {
                 ModelState.AddModelError("Link", "Link ile başlıktan üretilen URL uyuşmuyor.");
                 model.Link = generatedSlug;
             }
 
-            // Aynı slug daha önce eklenmiş mi?
             var existing = await _repository.Slides.AnyAsync(s => s.Link == generatedSlug);
             if (existing)
             {
                 ModelState.AddModelError("Title", "Bu başlıkla oluşturulmuş bir slayt zaten var.");
             }
 
-            // Aynı sırada ve aktif başka bir slayt var mı?
             var conflictOrder = await _repository.Slides
                 .AnyAsync(s => s.Order == model.Order && s.IsActive && model.IsActive);
 
@@ -148,7 +142,6 @@ public async Task<IActionResult> Index(string? status, int? order)
                 Link = slide.Link,
                 Order = slide.Order,
                 IsActive = slide.IsActive
-                // ImageFile yüklenemez çünkü dosya formdan alınmalı
             };
 
             ViewBag.ExistingImage = slide.ImageUrl;
@@ -229,7 +222,6 @@ public async Task<IActionResult> Index(string? status, int? order)
             if (slide == null)
                 return NotFound();
 
-            // Görsel dosyasını da sil
             var imagePath = Path.Combine(_env.WebRootPath, "img", "slides", slide.ImageUrl);
             if (System.IO.File.Exists(imagePath))
             {

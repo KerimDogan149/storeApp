@@ -22,6 +22,10 @@ namespace StoreApp.Data.Abstract
         IQueryable<Order> Orders { get; }
         IQueryable<OrderItem> OrderItems { get; }
 
+        IQueryable<ProductCategory> ProductCategories { get; }
+
+
+
         // PRODUCT VE CATEGORY İŞLEMLERİ
         void CreateProduct(Product entity);
 
@@ -36,6 +40,9 @@ namespace StoreApp.Data.Abstract
         Task DeleteCategoryAsync(int categoryId);
 
         Task DeleteProductAsync(int productId);
+
+        Task RemoveProductCategoriesAsync(IEnumerable<ProductCategory> items);
+
         int GetProductCount(string category);
 
         IEnumerable<Product> GetProductsByCategory(string category, int page, int pageSize);
@@ -88,7 +95,7 @@ namespace StoreApp.Data.Abstract
 
         Task CreateOrderAsync(Order order);
 
-        
+
 
     }
 }

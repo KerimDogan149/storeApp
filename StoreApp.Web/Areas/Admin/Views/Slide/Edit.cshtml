@@ -13,7 +13,8 @@
         {
             <div class="mb-3">
                 <label class="form-label">Mevcut Görsel</label><br />
-                <img src="@Url.Content($"~/img/slides/{ViewBag.ExistingImage}")" class="img-thumbnail" style="max-height: 150px;" />
+                <img src="@Url.Content($"~/img/slides/{ViewBag.ExistingImage}")" class="img-thumbnail"
+                    style="max-height: 150px;" />
             </div>
         }
 
@@ -31,8 +32,8 @@
 
         <div class="mb-3">
             <label asp-for="Link" class="form-label">Bağlantı</label>
-            <input asp-for="Link" class="form-control" readonly 
-                   style="background-color: #e9ecef; cursor: not-allowed;" />
+            <input asp-for="Link" class="form-control" readonly
+                style="background-color: #e9ecef; cursor: not-allowed;" />
             <span asp-validation-for="Link" class="text-danger"></span>
         </div>
 

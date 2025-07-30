@@ -21,86 +21,83 @@ using System.Security.Claims;
 namespace StoreApp.Web.Controllers
 {
 
-[Authorize]
-public class OrderController : Controller
-{
-    private readonly IStoreRepository _repository;
-    private readonly UserManager<AppUser> _userManager;
-
-    public OrderController(IStoreRepository repository, UserManager<AppUser> userManager)
+    [Authorize]
+    public class OrderController : Controller
     {
-        _repository = repository;
-        _userManager = userManager;
-    }
+        private readonly IStoreRepository _repository;
+        private readonly UserManager<AppUser> _userManager;
 
-    [HttpGet]
-    public async Task<IActionResult> Checkout()
-    {
-        var cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
-
-        var userId = _userManager.GetUserId(User);
-        var addresses = await _repository.GetAddressesByUserIdAsync(userId);
-
-        var model = new OrderCheckoutViewModel
+        public OrderController(IStoreRepository repository, UserManager<AppUser> userManager)
         {
-            Cart = cart,
-            Addresses = addresses
-        };
-
-        return View(model);
-    }
-
-    [HttpPost]
-
-    public async Task<IActionResult> Checkout(int SelectedAddressId)
-    {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
-        {
-            return RedirectToAction("Login", "Account");
+            _repository = repository;
+            _userManager = userManager;
         }
 
-        var address = await _repository.GetAddressByIdAsync(SelectedAddressId);
-        if (address == null || address.AppUserId != userId)
+        [HttpGet]
+        public async Task<IActionResult> Checkout()
         {
-            return RedirectToAction("Checkout");
-        }
+            var cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
 
-        var cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
-        if (cart.Items.Count == 0)
-        {
-            return RedirectToAction("Checkout");
-        }
+            var userId = _userManager.GetUserId(User);
+            var addresses = await _repository.GetAddressesByUserIdAsync(userId);
 
-        // Siparişi oluştur
-        var order = new Order
-        {
-            AppUserId = userId,
-            AddressId = SelectedAddressId,
-            OrderDate = DateTime.Now,
-            TotalAmount = cart.CalculateTotal(),
-            OrderItems = cart.Items.Select(i => new OrderItem
+            var model = new OrderCheckoutViewModel
             {
-                ProductId = i.Product.Id,
-                Quantity = i.Quantity,
-                Price = i.Product.Price
-            }).ToList()
-        };
+                Cart = cart,
+                Addresses = addresses
+            };
 
-        await _repository.CreateOrderAsync(order);
+            return View(model);
+        }
 
-        // Sepeti temizle
-        HttpContext.Session.Remove("Cart");
+        [HttpPost]
 
-        // Başarılı sayfasına yönlendir
-        return RedirectToAction("Success", new { id = order.Id });
-    }
+        public async Task<IActionResult> Checkout(int SelectedAddressId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var address = await _repository.GetAddressByIdAsync(SelectedAddressId);
+            if (address == null || address.AppUserId != userId)
+            {
+                return RedirectToAction("Checkout");
+            }
+
+            var cart = HttpContext.Session.GetJson<Cart>("Cart") ?? new Cart();
+            if (cart.Items.Count == 0)
+            {
+                return RedirectToAction("Checkout");
+            }
+
+            var order = new Order
+            {
+                AppUserId = userId,
+                AddressId = SelectedAddressId,
+                OrderDate = DateTime.Now,
+                TotalAmount = cart.CalculateTotal(),
+                OrderItems = cart.Items.Select(i => new OrderItem
+                {
+                    ProductId = i.Product.Id,
+                    Quantity = i.Quantity,
+                    Price = i.Product.Price
+                }).ToList()
+            };
+
+            await _repository.CreateOrderAsync(order);
+
+            HttpContext.Session.Remove("Cart");
+
+            return RedirectToAction("Success", new { id = order.Id });
+        }
 
 
         [HttpGet]
         public async Task<IActionResult> GetAddressDetails(int id)
         {
-        var address = await _repository.Addresses.FirstOrDefaultAsync(a => a.Id == id);
+            var address = await _repository.Addresses.FirstOrDefaultAsync(a => a.Id == id);
 
             if (address == null)
             {
@@ -110,16 +107,16 @@ public class OrderController : Controller
         }
 
 
-            public async Task<IActionResult> Success(int id)
-            {
-                var order = await _repository.Orders
-                    .Include(o => o.Address)
-                    .FirstOrDefaultAsync(o => o.Id == id);
+        public async Task<IActionResult> Success(int id)
+        {
+            var order = await _repository.Orders
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
-                if (order == null)
-                    return NotFound();
+            if (order == null)
+                return NotFound();
 
-                return View(order);
-            }
-}
+            return View(order);
+        }
+    }
 }
