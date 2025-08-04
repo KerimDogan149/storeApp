@@ -78,6 +78,26 @@
                             </li>
                         </ul>
                     </li>
+                    
+                                    <!-- Raporlar -->
+                <li class="nav-item dropdown mx-2">
+                    <a class="nav-link dropdown-toggle" href="#" id="reportDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bar-chart-line me-1"></i> Raporlar
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="reportDropdown">
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Report" asp-action="Dashboard">
+                                <i class="bi bi-pie-chart me-1"></i> Rapor Tablosu
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Report" asp-action="ProductSalesList">
+                                <i class="bi bi-list-ul me-1"></i> Ürün Satış Listesi
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                     <!-- Site Yönetimi -->
                     <li class="nav-item dropdown mx-2">

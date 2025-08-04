@@ -1,0 +1,76 @@
+@model StoreApp.Web.Areas.Admin.Models.Reports.ProductSalesListViewModel
+
+<h2 class="text-primary">Ürün Satışları Listesi</h2>
+
+<form method="get" asp-action="ProductSalesList" class="mb-4 d-flex gap-2 flex-wrap align-items-center">
+    <input type="text" name="name" value="@Model.FilterName" placeholder="Ürün adı ara" class="form-control"
+        style="max-width: 200px;" />
+
+    <select name="categoryId" class="form-select" style="max-width: 180px;">
+        <option value="">Tüm Kategoriler</option>
+        @foreach (var c in Model.Categories)
+        {
+            <option value="@c.Value" selected="@(Model.FilterCategoryId == int.Parse(c.Value))">@c.Text</option>
+        }
+    </select>
+
+    <select name="sortOrder" class="form-select" style="max-width: 150px;">
+        <option value="desc" selected="@(Model.SortOrder == "desc")">Çok Satanlar</option>
+        <option value="asc" selected="@(Model.SortOrder == "asc")">Az Satanlar</option>
+    </select>
+
+    <input type="date" name="startDate" value="@Model.StartDate?.ToString("yyyy-MM-dd")" class="form-control"
+        style="max-width: 160px;" />
+    <input type="date" name="endDate" value="@Model.EndDate?.ToString("yyyy-MM-dd")" class="form-control"
+        style="max-width: 160px;" />
+
+    <button type="submit" class="btn btn-primary">Ara</button>
+    <a asp-action="ProductSalesList" class="btn btn-secondary">Temizle</a>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+<table class="table table-bordered table-hover shadow-sm align-middle">
+    <thead class="table-light text-center">
+        <tr>
+            <th>Görsel</th>
+            <th>Ürün Adı</th>
+            <th>Kategoriler</th>
+            <th>Toplam Satılan Adet</th>
+            <th>İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td class="text-center">
+                    <img src="/img/products/@product.Image" alt="@product.Name" class="img-thumbnail"
+                        style="width: 60px; height: auto;" />
+                </td>
+                <td>
+                    <a asp-area="Admin" asp-controller="Report" asp-action="ProductSalesDetail"
+                        asp-route-productId="@product.Id" style="text-decoration: none; color: inherit;">
+                        @product.Name
+                    </a>
+                </td>
+                <td>@product.Categories</td>
+                <td class="text-center">@product.TotalQuantitySold</td>
+                <td class="text-center">
+                    <a href="@Url.Action("ProductSalesDetails", "Report", new { area = "Admin", id = product.Id })"
+                        class="btn btn-sm btn-primary">
+                        Detay
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
