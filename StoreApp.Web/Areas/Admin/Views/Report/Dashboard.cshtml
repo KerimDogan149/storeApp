@@ -1,0 +1,157 @@
+@model StoreApp.Web.Areas.Admin.Models.Reports.ReportDashboardViewModel
+@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "Raporlar - Dashboard";
+}
+
+<h2 class="mb-3 text-primary fw-bold">@ViewData["Title"]</h2>
+
+<form method="get" asp-action="Dashboard" class="mb-4 d-flex gap-3 align-items-center flex-wrap">
+    <div class="d-flex align-items-center gap-2">
+        <label for="yearSelect" class="mb-0 fw-semibold">Yıl:</label>
+        <select id="yearSelect" name="year" class="form-select" style="width: 120px;">
+            <option value="">Tüm Yıllar</option>
+            @for (int y = DateTime.Now.Year; y >= 2020; y--)
+            {
+                <option value="@y" selected="@(Model.SelectedYear == y)">@y</option>
+            }
+        </select>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <label for="monthSelect" class="mb-0 fw-semibold">Ay:</label>
+        <select id="monthSelect" name="month" class="form-select" style="width: 150px;">
+            <option value="">Tüm Aylar</option>
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(Model.SelectedMonth == m)">
+                    @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <label for="chartTypeSelect" class="mb-0 fw-semibold">Grafik Türü:</label>
+        <select id="chartTypeSelect" name="chartType" class="form-select" style="width: 150px;">
+            <option value="product" selected="@(Model.ChartType == "product")">Ürün Bazlı</option>
+            <option value="category" selected="@(Model.ChartType == "category")">Kategori Bazlı</option>
+            <option value="month" selected="@(Model.ChartType == "month")">Ay Bazlı</option>
+        </select>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Filtrele</button>
+        <a href="@Url.Action("Dashboard")" class="btn btn-outline-secondary">Temizle</a>
+    </div>
+</form>
+
+<div class="mb-4">
+    <h4>Toplam Gelir: <strong>@Model.TotalRevenue.ToString("C")</strong></h4>
+</div>
+
+<div class="row gy-4">
+    <div class="col-lg-6">
+        <h5 class="mb-3">Gelir Dağılımı (Pasta Grafik)</h5>
+        <canvas id="monthlySalesPieChart" style="max-height: 400px; width: 100%;"></canvas>
+    </div>
+
+    <div class="col-lg-6">
+        <h5 class="mb-3">En Çok Satan Ürünler</h5>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ürün Adı</th>
+                        <th>Satılan Adet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.TopSellers)
+                    {
+                        <tr>
+                        <td>
+                            <a href="/products/@product.Url" style="text-decoration: none; color: inherit;">
+                                @product.ProductName
+                            </a>
+                        </td>
+                            <td>@product.QuantitySold</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctxPie = document.getElementById('monthlySalesPieChart').getContext('2d');
+
+        const labels = @Html.Raw(JsonConvert.SerializeObject(Model.ChartLabels));
+        const dataValues = @Html.Raw(JsonConvert.SerializeObject(Model.ChartValues));
+
+        const backgroundColors = [
+            'rgba(255, 99, 132, 0.6)',
+            'rgba(54, 162, 235, 0.6)',
+            'rgba(255, 206, 86, 0.6)',
+            'rgba(75, 192, 192, 0.6)',
+            'rgba(153, 102, 255, 0.6)',
+            'rgba(255, 159, 64, 0.6)',
+            'rgba(199, 199, 199, 0.6)',
+            'rgba(83, 102, 255, 0.6)',
+            'rgba(255, 102, 255, 0.6)',
+            'rgba(102, 255, 204, 0.6)',
+            'rgba(255, 153, 102, 0.6)',
+            'rgba(102, 255, 255, 0.6)'
+        ];
+
+        if (window.pieChartInstance) {
+            window.pieChartInstance.destroy();
+        }
+
+        window.pieChartInstance = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: backgroundColors,
+                    borderColor: 'rgba(255, 255, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15,
+                            font: {
+                                size: 14,
+                                weight: 'bold',
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const chartType = '@Model.ChartType';
+                                if (chartType === 'product' || chartType === 'category') {
+                                    return context.label + ': ' + context.parsed.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                                } else if (chartType === 'month') {
+                                    return context.label + ': ' + context.parsed.toLocaleString();
+                                }
+                                return context.label + ': ' + context.parsed;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

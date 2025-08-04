@@ -2449,3 +2449,4 @@ C:\Users\kerim\storeApp\storeapp.web\obj\Debug\net9.0\refint\StoreApp.Web.dll
 C:\Users\kerim\storeApp\storeapp.web\obj\Debug\net9.0\StoreApp.Web.pdb
 C:\Users\kerim\storeApp\storeapp.web\obj\Debug\net9.0\StoreApp.Web.genruntimeconfig.cache
 C:\Users\kerim\storeApp\storeapp.web\obj\Debug\net9.0\ref\StoreApp.Web.dll
+C:\Users\kerim\storeApp\storeapp.web\bin\Debug\net9.0\Newtonsoft.Json.dll
