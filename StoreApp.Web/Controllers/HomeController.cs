@@ -27,9 +27,11 @@ public class HomeController : Controller
     {
         var featuredProducts = _storeRepository
                 .GetFeaturedProducts()
+                .Where(p => p.IsApproved)
                 .Select(p => _mapper.Map<ProductViewModel>(p));
 
         var bestSellers = _storeRepository.GetBestSellerProducts()
+        .Where(p => p.IsApproved)
         .Select(p => _mapper.Map<ProductViewModel>(p))
         .ToList();
 
@@ -45,6 +47,7 @@ public class HomeController : Controller
         return View(new ProductListViewModel
         {
             Products = _storeRepository.GetProductsByCategory(category, page, pageSize)
+                .Where(p => p.IsApproved)
              .Select(product => _mapper.Map<ProductViewModel>(product)),
             FeaturedProducts = featuredProducts,
             BestSellerProducts = bestSellers,
@@ -69,7 +72,7 @@ public class HomeController : Controller
         var product = _storeRepository.Products
             .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
-            .FirstOrDefault(p => p.Url == url);
+        .FirstOrDefault(p => p.Url == url && p.IsApproved); 
 
 
         if (product == null)
@@ -87,7 +90,7 @@ public class HomeController : Controller
         var filteredProducts = _storeRepository.Products
             .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Category)
-            .Where(p => p.ProductCategories.Any(pc => pc.Category.Url.ToLower() == category.ToLower()))
+                .Where(p => p.IsApproved && p.ProductCategories.Any(pc => pc.Category.Url.ToLower() == category.ToLower())) // 🔒
             .ToList();
 
         var productViewModels = filteredProducts
@@ -135,7 +138,7 @@ public class HomeController : Controller
             return RedirectToAction("Index");
 
         var matchedProducts = _storeRepository.Products
-            .Where(p => p.Name.ToLower().Contains(q.ToLower()))
+            .Where(p => p.IsApproved && p.Name.ToLower().Contains(q.ToLower()))
             .ToList();
 
         var products = matchedProducts

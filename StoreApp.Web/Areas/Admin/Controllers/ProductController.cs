@@ -522,13 +522,189 @@ namespace StoreApp.Web.Areas.Admin.Controllers
         {
             return View();
         }
-
-        // 3. Onay Bekleyen Ürünler
-        [HttpGet]
-        public IActionResult ApprovalQueue()
+        [HttpPost]
+        public async Task<IActionResult> UpdateBulkUpload(ProductBulkUploadViewModel model)
         {
-            return View();
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var errors = new List<string>();
+            var updatedCount = 0;
+
+            if (model.File == null || model.File.Length == 0)
+            {
+                ModelState.AddModelError("", "Dosya yüklenemedi.");
+                return View(model);
+            }
+
+            var ext = Path.GetExtension(model.File.FileName).ToLower();
+            if (ext != ".xlsx")
+            {
+                ModelState.AddModelError("", "Sadece .xlsx dosya formatı destekleniyor.");
+                return View(model);
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                await model.File.CopyToAsync(stream);
+                using (var package = new ExcelPackage(stream))
+                {
+                    var worksheet = package.Workbook.Worksheets.FirstOrDefault();
+                    if (worksheet == null || worksheet.Dimension == null || worksheet.Dimension.Rows < 2)
+                    {
+                        errors.Add("Excel dosyası boş veya geçersiz.");
+                    }
+                    else
+                    {
+                        int rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            string name = worksheet.Cells[row, 1].Text?.Trim();
+                            bool validPrice = decimal.TryParse(worksheet.Cells[row, 2].Text, out decimal price);
+                            bool validStock = int.TryParse(worksheet.Cells[row, 3].Text, out int stock);
+                            string categoryString = worksheet.Cells[row, 4].Text?.Trim();
+
+                            if (string.IsNullOrWhiteSpace(name))
+                            {
+                                errors.Add($"Satır {row}: Ürün adı boş olamaz.");
+                                continue;
+                            }
+
+                            if (!validPrice)
+                            {
+                                errors.Add($"Satır {row}: Geçersiz fiyat değeri.");
+                                continue;
+                            }
+
+                            if (!validStock)
+                            {
+                                errors.Add($"Satır {row}: Geçersiz stok değeri.");
+                                continue;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(categoryString))
+                            {
+                                errors.Add($"Satır {row}: Kategori alanı boş olamaz.");
+                                continue;
+                            }
+
+                            var product = _repository.Products
+                                .Include(p => p.ProductCategories)
+                                .FirstOrDefault(p => p.Name.ToLower() == name.ToLower());
+
+                            if (product == null)
+                            {
+                                errors.Add($"Satır {row}: '{name}' isminde bir ürün bulunamadı.");
+                                continue;
+                            }
+
+                            var categoryNames = categoryString
+                                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                .Select(c => c.Trim().ToLower())
+                                .Distinct()
+                                .ToList();
+
+                            var matchedCategories = _repository.Categories
+                                .Where(c => categoryNames.Contains(c.Name.ToLower()))
+                                .ToList();
+
+                            if (matchedCategories.Count != categoryNames.Count)
+                            {
+                                var missing = categoryNames.Except(matchedCategories.Select(c => c.Name.ToLower()));
+                                errors.Add($"Satır {row}: Sistem dışı kategori(ler): {string.Join(", ", missing)}");
+                                continue;
+                            }
+
+                            product.Price = price;
+                            product.Stock = stock;
+                            product.IsApproved = false;
+
+                            product.ProductCategories.Clear();
+                            foreach (var cat in matchedCategories)
+                            {
+                                product.ProductCategories.Add(new ProductCategory
+                                {
+                                    ProductId = product.Id,
+                                    CategoryId = cat.Id
+                                });
+                            }
+
+                            updatedCount++;
+                        }
+                    }
+                }
+            }
+
+            if (errors.Any())
+            {
+                ViewBag.Errors = errors;
+                return View(model);
+            }
+
+            await _repository.SaveChangesAsync();
+
+            TempData["success"] = $"{updatedCount} ürün başarıyla güncellendi.";
+            return RedirectToAction("UpdateBulkUpload");
         }
+
+
+        [HttpGet]
+        public IActionResult PendingApproval(ProductApprovalFilterViewModel filter)
+        {
+            var query = _repository.Products
+                .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
+                .Where(p => !p.IsApproved);
+
+            if (!string.IsNullOrWhiteSpace(filter.Name))
+            {
+                query = query.Where(p => p.Name.ToLower().Contains(filter.Name.ToLower()));
+            }
+
+            if (filter.CategoryId.HasValue)
+            {
+                query = query.Where(p => p.ProductCategories.Any(pc => pc.CategoryId == filter.CategoryId));
+            }
+
+            var products = query.ToList();
+
+            // Kategori listesi dropdown için
+            var categories = _repository.Categories
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                }).ToList();
+
+            filter.Products = products;
+            filter.Categories = categories;
+
+            return View(filter);
+        }
+                [HttpPost]
+        public async Task<IActionResult> ApproveSelected(List<int> productIds)
+        {
+            if (productIds == null || !productIds.Any())
+            {
+                TempData["error"] = "Herhangi bir ürün seçilmedi.";
+                return RedirectToAction("PendingApproval");
+            }
+
+            var productsToApprove = _repository.Products
+                .Where(p => productIds.Contains(p.Id) && !p.IsApproved)
+                .ToList();
+
+            foreach (var product in productsToApprove)
+            {
+                product.IsApproved = true;
+            }
+
+            await _repository.SaveChangesAsync();
+
+            TempData["success"] = $"{productsToApprove.Count} ürün onaylandı.";
+            return RedirectToAction("PendingApproval");
+        }
+
 
 
 

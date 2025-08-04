@@ -1,0 +1,97 @@
+@model StoreApp.Web.Areas.Admin.Models.ProductApprovalFilterViewModel
+
+<h4 class="fw-bold mb-4 text-primary">Onay Bekleyen Ürünler</h4>
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+@if (ViewBag.Errors != null)
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var err in (List<string>)ViewBag.Errors)
+            {
+                <li>@err</li>
+            }
+        </ul>
+    </div>
+}
+<form asp-action="PendingApproval" method="get" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="Name" value="@Model.Name" class="form-control" placeholder="Ürün adına göre ara" />
+    </div>
+    <div class="col-md-4">
+        <select name="CategoryId" class="form-select">
+            <option value="">Tüm Kategoriler</option>
+            @foreach (var item in Model.Categories)
+            {
+                <option value="@item.Value" selected="@(Model.CategoryId == int.Parse(item.Value))">@item.Text</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary">Filtrele
+        </button>
+        <a asp-action="PendingApproval" class="btn btn-outline-secondary">Temizle</a>
+    </div>
+</form>
+
+@if (Model.Products == null || !Model.Products.Any())
+{
+    <div class="alert alert-info">Onay bekleyen ürün bulunmamaktadır.</div>
+}
+else
+{
+    <form asp-action="ApproveSelected" method="post">
+        <table class="table table-bordered table-hover shadow-sm align-middle">
+            <thead class="table-light text-center">
+                <tr>
+                    <th><input type="checkbox" id="selectAll" /></th>
+                    <th>Ad</th>
+                    <th>Fiyat</th>
+                    <th>Stok</th>
+                    <th>Kategoriler</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model.Products)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" name="productIds" value="@product.Id" />
+                        </td>
+                        <td>@product.Name</td>
+                        <td>@product.Price.ToString("C")</td>
+                        <td>@product.Stock</td>
+                        <td>
+                            @string.Join(", ", product.ProductCategories.Select(pc => pc.Category.Name))
+                        </td>
+                        <td class="text-nowrap text-center">
+                            <a class="btn btn-sm btn-primary me-1" asp-action="Edit" asp-route-id="@product.Id">
+                                <i class="bi bi-pencil-square"></i> Düzenle
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@product.Id" method="post" style="display:inline;" 
+                                  onsubmit="return confirm('Bu ürünü silmek istediğinizden emin misiniz?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i> Sil
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-success">Seçilenleri Onayla</button>
+    </form>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById("selectAll").addEventListener("change", function () {
+            const checkboxes = document.querySelectorAll("input[name='productIds']");
+            checkboxes.forEach(cb => cb.checked = this.checked);
+        });
+    </script>
+}

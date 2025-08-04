@@ -307,6 +307,19 @@ namespace StoreApp.Data.Concrete
             await _context.SaveChangesAsync();
         }
 
+        //
+        public void RemoveProductCategory(ProductCategory pc)
+        {
+            _context.ProductCategories.Remove(pc);
+        }
+        public void AddProductCategory(ProductCategory pc)
+        {
+            _context.ProductCategories.Add(pc);
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
 
 
 

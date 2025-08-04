@@ -7,27 +7,8 @@
 
 
 <h4 class="fw-bold text-primary mb-4">
-    <i class="bi bi-pencil-square me-2"></i> Toplu Ürün Güncelleme
+    <i class="bi bi-pencil-square me-2"></i> Excel İle Toplu Ürün Güncelleme
 </h4>
-
-<div class="mb-3">
-    <a asp-action="DownloadUpdateTemplate" class="btn btn-outline-primary">
-        <i class="bi bi-download me-1"></i> Güncelleme Şablonunu İndir
-    </a>
-</div>
-
-<form asp-action="UpdateBulkUpload" method="post" enctype="multipart/form-data" class="border p-4 rounded shadow-sm bg-light">
-    <div class="mb-3">
-        <label asp-for="File" class="form-label fw-bold">Excel Dosyası Yükle (.xlsx)</label>
-        <input asp-for="File" type="file" accept=".xlsx" class="form-control" />
-        <span asp-validation-for="File" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">
-        <i class="bi bi-upload me-1"></i> Güncellemeyi Yükle
-    </button>
-</form>
-
 @if (ViewBag.Errors is List<string> errorList && errorList.Any())
 {
     <div class="alert alert-danger mt-4 border border-danger shadow-sm rounded-3 p-3">
@@ -51,3 +32,23 @@
         @TempData["success"]
     </div>
 }
+
+<div class="mb-3">
+    <a asp-action="DownloadUpdateTemplate" class="btn btn-outline-primary">
+        <i class="bi bi-download me-1"></i> Güncelleme Şablonunu İndir
+    </a>
+</div>
+
+<form asp-action="UpdateBulkUpload" method="post" enctype="multipart/form-data" class="border p-4 rounded shadow-sm bg-light">
+    <div class="mb-3">
+        <label asp-for="File" class="form-label fw-bold">Excel Dosyası Yükle (.xlsx)</label>
+        <input asp-for="File" type="file" accept=".xlsx" class="form-control" />
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-upload me-1"></i> Yükle
+    </button>
+</form>
+
+

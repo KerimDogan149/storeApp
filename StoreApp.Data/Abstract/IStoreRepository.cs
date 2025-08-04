@@ -95,6 +95,12 @@ namespace StoreApp.Data.Abstract
 
         Task CreateOrderAsync(Order order);
 
+        //
+        void RemoveProductCategory(ProductCategory pc);
+        void AddProductCategory(ProductCategory pc);
+        Task SaveChangesAsync();
+
+
 
 
     }
