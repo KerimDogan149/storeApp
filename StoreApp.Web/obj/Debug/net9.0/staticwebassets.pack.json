@@ -85,6 +85,10 @@
       "PackagePath": "staticwebassets\\img\\categories\\televizyon.jpg"
     },
     {
+      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\02d6db69-3fe3-457e-9567-981febbd80de.jpg",
+      "PackagePath": "staticwebassets\\img\\products\\02d6db69-3fe3-457e-9567-981febbd80de.jpg"
+    },
+    {
       "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\Philipsambilight.jpg",
       "PackagePath": "staticwebassets\\img\\products\\Philipsambilight.jpg"
     },
@@ -119,10 +123,6 @@
     {
       "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\asusrogstrix16.jpg",
       "PackagePath": "staticwebassets\\img\\products\\asusrogstrix16.jpg"
-    },
-    {
-      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\be435c98-e423-4dfd-8189-94270da26e31.jpg",
-      "PackagePath": "staticwebassets\\img\\products\\be435c98-e423-4dfd-8189-94270da26e31.jpg"
     },
     {
       "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\dellxps15.jpg",
@@ -175,10 +175,6 @@
     {
       "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\lenovotab12pro.jpg",
       "PackagePath": "staticwebassets\\img\\products\\lenovotab12pro.jpg"
-    },
-    {
-      "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\msikatana.jpg",
-      "PackagePath": "staticwebassets\\img\\products\\msikatana.jpg"
     },
     {
       "Id": "C:\\Users\\kerim\\storeApp\\storeapp.web\\wwwroot\\img\\products\\oledevo4k.jpg",

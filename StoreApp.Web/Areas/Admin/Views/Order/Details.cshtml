@@ -69,14 +69,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.OrderItems)
+                       @foreach (var item in Model.OrderItems)
                         {
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
                                         <img src="~/img/products/@item.Product.Image" width="60" height="60"
                                             class="rounded shadow-sm border" />
-                                        <span>@item.Product?.Name</span>
+                                        <a href="/products/@item.Product.Url" class="text-decoration-none text-dark">
+                                            @item.Product?.Name
+                                        </a>
                                     </div>
                                 </td>
                                 <td>@item.Quantity</td>

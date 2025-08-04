@@ -1,0 +1,235 @@
+@model List<StoreApp.Web.Areas.Admin.Models.ProductStockUpdateViewModel>
+
+@{
+    ViewData["Title"] = "Stok Yönetimi";
+
+    var filter = ViewBag.Filter as StoreApp.Web.Areas.Admin.Models.ProductStockFilterViewModel;
+    var currentName = filter?.Name ?? "";
+    var currentMin = filter?.MinStock?.ToString() ?? "";
+    var currentMax = filter?.MaxStock?.ToString() ?? "";
+    var currentCategory = filter?.Category ?? "";
+    var currentSort = filter?.Sort ?? "asc";
+    var categoryList = ViewBag.Categories as List<string>;
+    var thresholdValue = ViewBag.Threshold?.ToString() ?? "5";
+
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-3">Stok Yönetimi</h2>
+
+    <form id="stockFilterForm" method="get" class="row row-cols-lg-auto g-3 align-items-center mb-3">
+       <div class="row g-3 align-items-end">
+    <div class="col-md-3">
+        <label for="Name" class="form-label">Ürün Adı</label>
+        <input type="text" name="Name" id="Name" class="form-control" placeholder="Ürün adı girin" value="@currentName" />
+    </div>
+
+    <div class="col-md-2">
+        <label for="MinStock" class="form-label">Min Stok</label>
+        <input type="number" name="MinStock" id="MinStock" class="form-control" placeholder="Min Stok Değeri" value="@currentMin" />
+    </div>
+
+    <div class="col-md-2">
+        <label for="MaxStock" class="form-label">Max Stok</label>
+        <input type="number" name="MaxStock" id="MaxStock" class="form-control" placeholder="Max Stok Değeri"  value="@currentMax" />
+    </div>
+
+    <div class="col-md-3">
+        <label for="Category" class="form-label">Kategori</label>
+        <select name="Category" id="Category" class="form-select">
+            <option value="">Tüm Kategoriler</option>
+            @if (categoryList != null)
+            {
+                foreach (var cat in categoryList)
+                {
+                    <option value="@cat" selected="@(cat == currentCategory ? "selected" : null)">@cat</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label for="Sort" class="form-label">Sıralama</label>
+        <select name="Sort" id="Sort" class="form-select">
+            <option value="asc" selected="@(currentSort == "asc" ? "selected" : null)">Az → Çok</option>
+            <option value="desc" selected="@(currentSort == "desc" ? "selected" : null)">Çok → Az</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label for="thresholdInput" class="form-label">Eşik Değeri <span class="text-muted">(Varsayılan: 5)</span></label>
+        <div class="input-group">
+            <span class="input-group-text">Stok ≤</span>
+            <input id="thresholdInput" type="number" class="form-control" value="@thresholdValue" placeholder="Varsayılan 5" />
+        </div>
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-outline-primary w-100">Filtrele</button>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <a asp-action="Index" class="btn btn-outline-secondary w-100">Temizle</a>
+    </div>
+</div>
+
+    </form>
+<div id="criticalInfoContainer">
+    @if (ViewBag.CriticalCount > 0)
+    {
+        <div class="alert alert-danger text-center fw-bold">
+            <i class="bi bi-exclamation-triangle"></i>
+            @ViewBag.CriticalCount adet ürünün stok seviyesi kritikte! (≤ @ViewBag.Threshold)
+        </div>
+    }
+</div>
+
+    @if (ViewBag.FilterError != null)
+    {
+        <div class="alert alert-warning">@ViewBag.FilterError</div>
+    }
+
+    <div id="productTableContainer">
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">Henüz ürün eklenmemiş.</div>
+        }
+        else
+        {
+            <table id="productTable" class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Görsel</th>
+                        <th>Ürün Adı</th>
+                        <th>Fiyat</th>
+                        <th>Kategoriler</th>
+                        <th>Stok</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-stock="@item.Stock">
+                            <td style="width:100px;">
+                                <img src="~/img/products/@item.ImageUrl" alt="@item.Name" class="img-fluid rounded" />
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@item.Price.ToString("C0", new System.Globalization.CultureInfo("tr-TR"))</td>
+                            <td>@string.Join(", ", item.CategoryNames)</td>
+                            <td class="stock-cell">@item.Stock</td>
+                            <td>
+                                <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-pencil-square"></i> Güncelle
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const thresholdInput = document.getElementById("thresholdInput");
+
+function applyBlinking(threshold) {
+    document.querySelectorAll("#productTable tbody tr").forEach(row => {
+        const stock = parseInt(row.dataset.stock);
+        const cells = row.querySelectorAll("td");
+
+        if (!isNaN(threshold) && stock <= threshold) {
+            cells.forEach(cell => cell.classList.add("blinking"));
+        } else {
+            cells.forEach(cell => cell.classList.remove("blinking"));
+        }
+    });
+}
+
+
+thresholdInput.addEventListener("input", function () {
+    const threshold = parseInt(this.value);
+    console.log(" thresholdInput değişti:", threshold);
+
+    if (isNaN(threshold)) {
+        console.warn(" Eşik değeri geçerli değil");
+        return;
+    }
+
+    const form = document.getElementById("stockFilterForm");
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+    params.append("threshold", threshold);
+
+    console.log(" AJAX istek gönderiliyor:", params.toString());
+
+    fetch(`/Admin/ProductStock/GetProductTablePartial?${params.toString()}`)
+        .then(response => {
+            console.log(" AJAX yanıtı geldi");
+            return response.text();
+        })
+        .then(html => {
+            const container = document.getElementById("productTableContainer");
+            container.innerHTML = html;
+            console.log("Yeni tablo DOM'a eklendi");
+
+            setTimeout(() => applyBlinking(threshold), 100); 
+
+
+            updateCriticalInfo(threshold);
+        })
+        .catch(err => {
+            console.error("AJAX hatası:", err);
+        });
+});
+
+
+
+            const initialThreshold = parseInt(thresholdInput.value);
+            if (!isNaN(initialThreshold)) {
+                console.log("📌 Sayfa başlangıcında applyBlinking çalışıyor");
+                applyBlinking(initialThreshold);
+            }
+        });
+        function updateCriticalInfo(threshold) {
+    const form = document.getElementById("stockFilterForm");
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+    params.append("threshold", threshold);
+
+    fetch(`/Admin/ProductStock/GetCriticalCount?${params.toString()}`)
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("criticalInfoContainer");
+
+            if (data.count > 0) {
+                container.innerHTML = `
+                    <div class="alert alert-danger text-center fw-bold">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        ${data.count} adet ürünün stok seviyesi kritikte! (≤ ${data.threshold})
+                    </div>
+                `;
+            } else {
+                container.innerHTML = "";
+            }
+        });
+}
+
+    </script>
+}
+@section Styles {
+    <style>
+        .blinking {
+            animation: blink 1s infinite !important;
+        }
+
+        @@keyframes blink {
+            0% { background-color: #ffe6e6; }
+            50% { background-color: #ffffff; }
+            100% { background-color: #ffe6e6; }
+        }
+    </style>
+}

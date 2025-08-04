@@ -149,10 +149,33 @@ namespace StoreApp.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(int id, Order orderModel)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (order == null) return NotFound();
 
+            var previousStatus = order.Status;
             order.Status = orderModel.Status;
+
+            if (previousStatus != OrderStatus.TeslimEdildi && order.Status == OrderStatus.TeslimEdildi)
+            {
+                foreach (var item in order.OrderItems)
+                {
+                    item.Product.Stock -= item.Quantity;
+                    if (item.Product.Stock < 0)
+                        item.Product.Stock = 0;
+                }
+            }
+
+            if (previousStatus == OrderStatus.IadeTalebinde && order.Status == OrderStatus.IadeEdildi)
+            {
+                foreach (var item in order.OrderItems)
+                {
+                    item.Product.Stock += item.Quantity;
+                }
+            }
 
             _context.Update(order);
             await _context.SaveChangesAsync();

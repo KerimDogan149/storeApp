@@ -24,6 +24,7 @@ namespace StoreApp.Data.Concrete
 
         public OrderStatus Status { get; set; } = OrderStatus.Hazirlaniyor;
 
+        public bool IsSeen { get; set; } 
 
         public List<OrderItem> OrderItems { get; set; } = new();
     }

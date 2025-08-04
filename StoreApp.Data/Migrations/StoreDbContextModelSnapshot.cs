@@ -224,6 +224,9 @@ namespace StoreApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsSeen")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Note")
                         .HasColumnType("TEXT");
 
@@ -278,6 +281,9 @@ namespace StoreApp.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -285,6 +291,9 @@ namespace StoreApp.Data.Migrations
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsBestSeller")
                         .HasColumnType("INTEGER");
@@ -299,6 +308,9 @@ namespace StoreApp.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -311,408 +323,519 @@ namespace StoreApp.Data.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "iPhone 16, Apple'ın en yeni nesil akıllı telefonudur. Pembe renk seçeneğiyle dikkat çeker. Gelişmiş yapay zeka destekli kamera sistemi, ultra retina XDR ekran, A18 çipi ve uzun pil ömrüyle günlük kullanımı lüks hale getirir.",
                             Image = "iphone16.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "iPhone 16",
                             Price = 62000m,
+                            Stock = 31,
                             Url = "iphone-16"
                         },
                         new
                         {
                             Id = 2,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "A16 Bionic çip ile güçlendirilmiş iPhone 15, enerji verimliliği ve performansı bir araya getiriyor. Kamera özellikleri, sinematik mod ve gelişmiş HDR desteği ile üst düzey çekimler yapmanıza olanak sağlar. Pembe renk ile şık bir görünüm sunar.",
                             Image = "iphone15.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "iPhone 15",
                             Price = 55000m,
+                            Stock = 55,
                             Url = "iphone-15"
                         },
                         new
                         {
                             Id = 3,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "iPhone 14, dayanıklı Ceramic Shield camı ve gelişmiş pil ömrüyle günlük kullanıma tam uyumludur. Mor rengi ve çift arka kamera sistemi ile estetik ve işlevselliği bir araya getirir. Crash Detection gibi hayat kurtaran özellikleriyle donatılmıştır.",
                             Image = "iphone14.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "iPhone 14",
                             Price = 43000m,
+                            Stock = 62,
                             Url = "iphone-14"
                         },
                         new
                         {
                             Id = 4,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "OLED ekran, güçlü A15 Bionic çip ve uzun pil ömrüyle iPhone 13, günlük kullanıcılar için mükemmel bir seçimdir. Beyaz renk seçeneği sade ve zarif bir görünüm sunar. Video ve fotoğraf çekimlerinde Smart HDR 4 teknolojisiyle üst düzey kalite sağlar.",
                             Image = "iphone13.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "iPhone 13",
                             Price = 33000m,
+                            Stock = 62,
                             Url = "iphone-13"
                         },
                         new
                         {
                             Id = 5,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "iPhone 12, 5G teknolojisi ve Super Retina XDR ekranı ile dikkat çeker. Mor renk ile özgün tarzını ortaya koymak isteyenler için ideal. Güçlü performansı ve MagSafe aksesuar desteği ile modern bir deneyim sunar.",
                             Image = "iphone12.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "iPhone 12",
                             Price = 25000m,
+                            Stock = 62,
                             Url = "iphone-12"
                         },
                         new
                         {
                             Id = 6,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Geniş açı kamerası, dayanıklı cam yapısı ve akıcı iOS deneyimi ile iPhone 11 kullanıcı dostudur. Beyaz rengi ile sade ve modern bir tasarım sunar. Uzun pil ömrü ve iOS güncellemeleri ile hala güçlü bir tercihtir.",
                             Image = "iphone11.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "iPhone 11",
                             Price = 20000m,
+                            Stock = 62,
                             Url = "iphone-11"
                         },
                         new
                         {
                             Id = 7,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Galaxy S24, Snapdragon 8 Gen 3 işlemcisi ve Dynamic AMOLED 2X ekranıyla üst düzey Android performansı sunar. Kamera sisteminde gece modu, 8K video ve yapay zeka destekli portre çekimleri dikkat çeker. Şık tasarımıyla göz doldurur.",
                             Image = "samsungs24.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Samsung Galaxy S24",
                             Price = 44000m,
+                            Stock = 62,
                             Url = "samsung-galaxy-s24"
                         },
                         new
                         {
                             Id = 8,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Samsung Galaxy S23, kompakt tasarımı ve güçlü donanımıyla günlük kullanıma ideal. 120Hz ekran yenileme hızı ve HDR10+ desteğiyle multimedya deneyimini üst seviyeye taşır. Gelişmiş kamera sistemi ile sosyal medya için mükemmel içerikler üretin.",
                             Image = "samsungs23.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Samsung Galaxy S23",
                             Price = 38000m,
+                            Stock = 62,
                             Url = "samsung-galaxy-s23"
                         },
                         new
                         {
                             Id = 9,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Galaxy S22, şık tasarımı ve Fiyat/performans dengesiyle öne çıkan bir modeldir. Exynos işlemci, yüksek parlaklığa sahip AMOLED ekran ve kompakt yapısı ile kullanıcı dostu bir Android deneyimi sunar. Uygun fiyatla premium his verir.",
                             Image = "samsungs22.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Samsung Galaxy S22",
                             Price = 30000m,
+                            Stock = 62,
                             Url = "samsung-galaxy-s22"
                         },
                         new
                         {
                             Id = 10,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Dell XPS 15, ultra ince tasarımı, 3.5K OLED ekranı ve 13. nesil Intel işlemcisiyle üst düzey performansı bir araya getiriyor. Hem profesyonel işler hem de multimedya için ideal bir dizüstü bilgisayar.",
                             Image = "dellxps15.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Dell XPS 15",
                             Price = 115000m,
+                            Stock = 62,
                             Url = "dell-xps-15"
                         },
                         new
                         {
                             Id = 11,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lenovo Legion Pro, güçlü ekran kartı ve yüksek tazeleme hızına sahip ekranıyla oyuncular için geliştirilmiş bir dizüstü bilgisayardır. RGB klavyesi ve üstün soğutma sistemi ile fark yaratır.",
                             Image = "lenovolegionpro.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Lenovo Legion Pro",
                             Price = 95000m,
+                            Stock = 62,
                             Url = "lenovo-legion-pro"
                         },
                         new
                         {
                             Id = 12,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Apple’ın yeni nesil M4 işlemcisine sahip MacBook Air, fan gerektirmeyen sessiz tasarımı ve uzun pil ömrü ile günlük kullanımda mükemmel performans sunar. Ultra hafif yapısıyla taşınabilirlikte lider.",
                             Image = "applemacbookairm4.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "MacBook Air M4",
                             Price = 130000m,
+                            Stock = 62,
                             Url = "apple-macbook-air-m4"
                         },
                         new
                         {
                             Id = 13,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "M3 çipli MacBook Air, Apple ekosistemiyle kusursuz uyum içinde çalışır. Öğrenciler, içerik üreticileri ve günlük kullanıcılar için yüksek performans ve batarya verimliliği sunar.",
                             Image = "applemacbookairm3.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "MacBook Air M3",
                             Price = 118000m,
+                            Stock = 62,
                             Url = "apple-macbook-air-m3"
                         },
                         new
                         {
                             Id = 14,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Apple’ın ikonik tasarımıyla birleşen M2 işlemcisi sayesinde MacBook Air M2, verimli işlem gücü ve üstün ekran kalitesi ile tanınır. Profesyoneller için ideal bir seçenek.",
                             Image = "applemacbookairm2.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "MacBook Air M2",
                             Price = 99000m,
+                            Stock = 62,
                             Url = "apple-macbook-air-m2"
                         },
                         new
                         {
                             Id = 15,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "MSI Katana GF66, yüksek performanslı NVIDIA RTX ekran kartı, hızlı SSD depolama ve şık tasarımıyla oyun tutkunları için özel olarak üretilmiş bir dizüstü bilgisayardır.",
                             Image = "msikatana.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "MSI Katana GF66",
                             Price = 87000m,
+                            Stock = 62,
                             Url = "msi-katana-gf66"
                         },
                         new
                         {
                             Id = 16,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "HP Victus 16, oyun ve günlük kullanım için dengeli performans sunar. AMD ve Intel varyantlarıyla farklı ihtiyaçlara hitap ederken tasarımıyla da dikkat çeker.",
                             Image = "hpvictus16.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "HP Victus 16",
                             Price = 78000m,
+                            Stock = 62,
                             Url = "hp-victus-16"
                         },
                         new
                         {
                             Id = 17,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Acer Nitro V5, geniş ekranı, yüksek performanslı donanımı ve etkileyici soğutma sistemiyle özellikle oyuncular ve güç kullanıcıları için geliştirilmiş bir laptop modelidir.",
                             Image = "acernitrov5.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Acer Nitro V5",
                             Price = 74000m,
+                            Stock = 62,
                             Url = "acer-nitro-v5"
                         },
                         new
                         {
                             Id = 18,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Samsung'un QLED teknolojisi ile donatılmış bu 55 inçlik televizyon, kristal netliğinde görüntü kalitesi ve HDR desteği ile ev sinema keyfini bir üst seviyeye taşıyor. Akıllı TV özellikleri, yerleşik uygulamalar ve sesli kontrol desteği ile zengin bir kullanıcı deneyimi sunar.",
                             Image = "samsungqledsmart4k.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Samsung QLED Smart 4K 55",
                             Price = 32500m,
+                            Stock = 62,
                             Url = "samsung-qled-smart-4k-55"
                         },
                         new
                         {
                             Id = 19,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "TCL'in yüksek çözünürlüklü 50 inç Android TV’si, geniş ekran deneyimi, Google TV entegrasyonu ve Dolby Vision teknolojisi ile uygun fiyatlı bir premium seçenek sunar. Minimalist tasarımıyla her odaya uyum sağlar.",
                             Image = "tcl50.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "TCL 50 4K Ultra HD Android TV",
                             Price = 18900m,
+                            Stock = 62,
                             Url = "tcl-50-4k-ultra-hd-android-tv"
                         },
                         new
                         {
                             Id = 20,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Philips Ambilight özelliği ile ortam aydınlatmasını ekranla senkronize eden bu televizyon, sinema keyfini eve taşıyor. 4K çözünürlük, Dolby Atmos desteği ve Android işletim sistemiyle etkileyici bir performans sunar.",
                             Image = "Philipsambilight.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Philips Ambilight 50 Smart TV",
                             Price = 27900m,
+                            Stock = 62,
                             Url = "philips-ambilight-50-smart-tv"
                         },
                         new
                         {
                             Id = 21,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Sony Bravia XR teknolojisi ile görüntüleri yapay zeka desteğiyle işleyerek olağanüstü kontrast ve renk doğruluğu sunar. OLED paneli, derin siyahlar ve etkileyici detaylarla sinema keyfini yeniden tanımlar. Google TV ile zengin uygulama desteği de cabası.",
                             Image = "sonybravia.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Sony Bravia XR OLED 55",
                             Price = 48500m,
+                            Stock = 62,
                             Url = "sony-bravia-xr-oled-55"
                         },
                         new
                         {
                             Id = 22,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "LG'nin OLED Evo teknolojisiyle donatılmış bu model, olağanüstü görüntü kalitesi ve canlı renklerle dikkat çeker. WebOS işletim sistemi, Magic Remote ve Dolby Vision IQ ile akıllı deneyimi zenginleştirir.",
                             Image = "oledevo4.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "OLED Evo 4K LG 55",
                             Price = 44900m,
+                            Stock = 62,
                             Url = "oled-evo-4k-lg-55"
                         },
                         new
                         {
                             Id = 23,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Nintendo Switch OLED modeli, canlı renkler ve gelişmiş taşınabilirlik sunar. 7 inç OLED ekran, daha geniş ayarlanabilir stand, gelişmiş ses deneyimi ve 64 GB dahili depolama ile oyun keyfini yeniden tanımlıyor.",
                             Image = "nintendoswitcholed.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Nintendo Switch OLED",
                             Price = 13500m,
+                            Stock = 62,
                             Url = "nintendo-switch-oled"
                         },
                         new
                         {
                             Id = 24,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Microsoft'un en güçlü konsolu olan Xbox Series X, 1TB SSD, 4K çözünürlükte 120 FPS oyun desteği ve ultra hızlı yükleme süreleri ile üst düzey performans sunar.",
                             Image = "xboxseriesx.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Xbox Series X",
                             Price = 22000m,
+                            Stock = 62,
                             Url = "xbox-series-x"
                         },
                         new
                         {
                             Id = 25,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "PlayStation 5 Slim, yüksek performans ve daha ince tasarımı bir araya getiriyor. 4K 120Hz desteği, gelişmiş DualSense kontrolleri ve geniş oyun kütüphanesi ile sizi oyun dünyasına taşır.",
                             Image = "ps5slim.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "PlayStation 5 Slim",
                             Price = 30000m,
+                            Stock = 62,
                             Url = "playstation-5-slim"
                         },
                         new
                         {
                             Id = 26,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "PlayStation Portal, PS5 konsolunuzdaki oyunları uzaktan oynamanızı sağlayan taşınabilir bir cihazdır. 8 inç LCD ekranı ve DualSense entegre kontrolleri ile mobil oyun deneyimi sunar.",
                             Image = "playstationportal.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "PlayStation Portal",
                             Price = 15000m,
+                            Stock = 62,
                             Url = "playstation-portal"
                         },
                         new
                         {
                             Id = 27,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "PlayStation 4 Slim, kompakt tasarımı ve güçlü performansı ile oyun deneyimini ekonomik şekilde yaşamak isteyenler için ideal bir konsoldur.",
                             Image = "playstation4.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "PlayStation 4 Slim",
                             Price = 21000m,
+                            Stock = 62,
                             Url = "playstation-4-slim"
                         },
                         new
                         {
                             Id = 28,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "120 Hz ekran yenileme hızı, Snapdragon işlemcisi ve hafif tasarımıyla yüksek performanslı bir tablet deneyimi sunar.",
                             Image = "huaweimatpad11.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Huawei MatePad 11",
                             Price = 10999m,
+                            Stock = 62,
                             Url = "huawei-matepad-11"
                         },
                         new
                         {
                             Id = 29,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Geniş 12.7 inç ekranı ve yüksek çözünürlüğü ile film izleme ve çizim yapma keyfini doruklara çıkarır.",
                             Image = "lenovotab12pro.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Lenovo Tab 12 Pro",
                             Price = 12999m,
+                            Stock = 62,
                             Url = "lenovo-tab-12-pro"
                         },
                         new
                         {
                             Id = 30,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "2880x1800 çözünürlüklü ekranı, Snapdragon 870 işlemcisi ve Dolby Atmos destekli hoparlörleriyle multimedya için ideal.",
                             Image = "xiaomipad6.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Xiaomi Pad 6",
                             Price = 11499m,
+                            Stock = 62,
                             Url = "xiaomi-pad-6"
                         },
                         new
                         {
                             Id = 31,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "14.6 inç Dynamic AMOLED ekran, IP68 suya dayanıklılık ve S Pen desteği ile profesyonel seviyede bir Android tablet.",
                             Image = "samsunggalaxytabs9.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Samsung Galaxy Tab S9 Ultra",
                             Price = 32999m,
+                            Stock = 62,
                             Url = "samsung-galaxy-tab-s9-ultra"
                         },
                         new
                         {
                             Id = 32,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "M4 çipi, Liquid Retina XDR ekranı ve Apple Pencil Pro desteği ile içerik üreticileri ve profesyoneller için en güçlü iPad.",
                             Image = "appleipadpro.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Apple iPad Pro",
                             Price = 42000m,
+                            Stock = 62,
                             Url = "apple-ipad-pro"
                         },
                         new
                         {
                             Id = 33,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Ultra ince tasarımı ve gelişmiş AMOLED ekranı ile dikkat çeken Amazfit GTS 4, sağlık takibi ve spor aktiviteleri için ideal.",
                             Image = "amazfitgt6.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Amazfit GTS 4",
                             Price = 4799m,
+                            Stock = 62,
                             Url = "amazfit-gts-4"
                         },
                         new
                         {
                             Id = 34,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "1.43 inç AMOLED ekranı, 117 spor modu ve uzun pil ömrü ile Xiaomi Watch S1 Active günlük kullanım için mükemmel bir akıllı saat.",
                             Image = "xiaomi-watch-s1-active-siyah.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Xiaomi Watch S1 Active",
                             Price = 3899m,
+                            Stock = 62,
                             Url = "xiaomi-watch-s1-active"
                         },
                         new
                         {
                             Id = 35,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Şık tasarımı ve uzun pil ömrüyle dikkat çeken Huawei Watch GT 4, sağlık takibi ve spor özelliklerini bir arada sunar.",
                             Image = "huaweiwatchgt6.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Huawei Watch GT 4",
                             Price = 5999m,
+                            Stock = 62,
                             Url = "huawei-watch-gt-4"
                         },
                         new
                         {
                             Id = 36,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Samsung’un son nesil akıllı saati Watch 6, güçlü donanımı ve kapsamlı sağlık özellikleriyle öne çıkıyor.",
                             Image = "samsunggalaxywatch6.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Samsung Galaxy Watch 6",
                             Price = 7799m,
+                            Stock = 62,
                             Url = "samsung-galaxy-watch-6"
                         },
                         new
                         {
                             Id = 37,
+                            CreatedDate = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Apple’ın en yeni akıllı saati Series 9, güçlü işlemcisi ve gelişmiş sağlık özellikleriyle iPhone kullanıcıları için vazgeçilmez.",
                             Image = "applewatchseries.jpg",
+                            IsApproved = true,
                             IsBestSeller = false,
                             IsFeatured = false,
                             Name = "Apple Watch Series 9",
                             Price = 17499m,
+                            Stock = 62,
                             Url = "apple-watch-series-9"
                         });
                 });

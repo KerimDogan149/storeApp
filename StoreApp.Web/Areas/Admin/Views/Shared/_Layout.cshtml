@@ -1,12 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="@Url.Content("~/css/site.css")" />
 
 
 
@@ -20,23 +20,38 @@
 
     <partial name="_Navbar" />
     <div class="container my-3">
-    @RenderBody()
+        @RenderBody()
     </div>
 
 
-<footer class="bg-body-tertiary text-dark py-5 mt-5 border-top">
-    <div class="container">
-        @await Component.InvokeAsync("SiteSocial")
-    </div>
-</footer>
+    <footer class="bg-body-tertiary text-dark py-5 mt-5 border-top">
+        <div class="container">
+            @await Component.InvokeAsync("SiteSocial")
+        </div>
+    </footer>
 
 
 
 
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    
+
     @RenderSection("Scripts", required: false)
+    @RenderSection("Styles", required: false)
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const orderLinks = document.querySelectorAll(".notification-order");
+
+            orderLinks.forEach(link => {
+                link.addEventListener("click", function () {
+                    fetch("/Admin/Notification/MarkOrdersAsSeen", {
+                        method: "POST"
+                    });
+                });
+            });
+        });
+    </script>
 
 </body>
+
 </html>

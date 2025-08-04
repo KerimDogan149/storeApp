@@ -13,12 +13,12 @@ namespace StoreApp.Data.Concrete
         public string Image { get; set; } = string.Empty;
         public decimal Price { get; set; }
 
+        public int Stock { get; set; }
         public bool IsFeatured { get; set; } = false;
 
         public bool IsBestSeller { get; set; } = false;
-        public List<ProductCategory> ProductCategories { get; set; } = new(); // ✅
+        public List<ProductCategory> ProductCategories { get; set; } = new();
 
-        // Constructor ekliyoruz (Name verilince Url otomatik oluşsun)
         public Product()
         {
         }
@@ -27,5 +27,9 @@ namespace StoreApp.Data.Concrete
             Name = name;
             Url = name.ToUrlSlug();
         }
+        public bool IsApproved { get; set; } = true;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+
     }
 }

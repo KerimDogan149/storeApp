@@ -58,17 +58,27 @@
             }
 
 
-            <div class="d-grid gap-2 d-md-block">
-                <form method="post"class="d-inline" asp-page="/Cart">
-                    <input type="hidden" asp-for=@Model.Id name="Id"/>
-                    <button type="submit" class="btn btn-dark btn-lg px-4 mt2-">
-                    <i class="bi bi-cart-plus me-1"></i> Sepete Ekle
-                    </button>
-                </form>
-                <a href="/" class="btn btn-outline-secondary btn-lg px-4 mx-2">
-                    <i class="bi bi-arrow-left"></i> Geri Dön
-                </a>
-            </div>
+                <div class="d-grid gap-2 d-md-block">
+                    @if (Model.Stock > 0)
+                    {
+                        <form method="post" class="d-inline" asp-page="/Cart">
+                            <input type="hidden" asp-for="@Model.Id" name="Id" />
+                            <button type="submit" class="btn btn-dark btn-lg px-4 mt-2">
+                                <i class="bi bi-cart-plus me-1"></i> Sepete Ekle
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary btn-lg px-4 mt-1" disabled>
+                            <i class="bi bi-x-circle me-1"></i> Tükendi
+                        </button>
+                    }
+
+                    <a href="/" class="btn btn-outline-secondary btn-lg px-4 mx-2">
+                        <i class="bi bi-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
         </div>
     </div>
 </div>

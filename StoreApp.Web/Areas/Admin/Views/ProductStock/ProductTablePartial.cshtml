@@ -1,0 +1,33 @@
+@model List<StoreApp.Web.Areas.Admin.Models.ProductStockUpdateViewModel>
+
+<table id="productTable" class="table table-bordered table-hover align-middle text-center">
+    <thead class="table-light">
+        <tr>
+            <th>Görsel</th>
+            <th>Ürün Adı</th>
+            <th>Fiyat</th>
+            <th>Kategoriler</th>
+            <th>Stok</th>
+            <th>İşlem</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr data-stock="@item.Stock">
+                <td style="width:100px;">
+                    <img src="~/img/products/@item.ImageUrl" alt="@item.Name" class="img-fluid rounded" />
+                </td>
+                <td>@item.Name</td>
+                <td>@item.Price.ToString("C0", new System.Globalization.CultureInfo("tr-TR"))</td>
+                <td>@string.Join(", ", item.CategoryNames)</td>
+                <td class="stock-cell">@item.Stock</td>
+                <td>
+                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                        <i class="bi bi-pencil-square"></i> Güncelle
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

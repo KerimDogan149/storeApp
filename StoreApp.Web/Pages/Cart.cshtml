@@ -8,6 +8,21 @@
     <i class="bi bi-cart3 me-2"></i> Alışveriş Sepeti
 </h4>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (Model?.Cart?.Items.Count == 0)
 {
     <div class="alert alert-info text-center shadow-sm rounded p-4">
@@ -37,14 +52,14 @@ else
                 <tr>
                     <td>
                         <div class="d-flex align-items-center">
-                            <a href="/@item.Product.Url">
+                            <a href="products/@item.Product.Url">
                                 <img src="~/img/products/@item.Product.Image"
                                      alt="@item.Product.Name"
                                      class="me-3 border rounded shadow-sm"
                                      style="width: 70px; height: 70px; object-fit: contain;" />
                             </a>
                             <div>
-                                <a href="/@item.Product.Url" class="text-decoration-none text-dark fw-bold">
+                                <a href="products/@item.Product.Url" class="text-decoration-none text-dark fw-bold">
                                     @item.Product.Name
                                 </a>
                             </div>
