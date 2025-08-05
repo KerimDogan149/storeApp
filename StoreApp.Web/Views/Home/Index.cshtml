@@ -55,47 +55,56 @@
 <hr>
 
 
-
 @if (Model.FeaturedProducts?.Any() == true)
 {
     <div class="container my-5 position-relative">
         <h4 class="fw-bold mb-3">Günün Öne Çıkanları</h4>
 
         <div id="featuredContainer" class="d-flex overflow-hidden gap-3">
-            @foreach (var p in Model.FeaturedProducts)
-            {
-                <div class="card h-100 border rounded shadow-sm position-relative"
-                    style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
-                    <a href="/products/@p.Url" class="text-decoration-none text-dark">
+           @foreach (var p in Model.FeaturedProducts)
+{
+    var isFavorited = Model.FavoriteProductIds?.Contains(p.Id) == true;
 
-                        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
-                            @if (p.IsFeatured)
-                            {
-                                <span class="badge rounded-pill bg-danger">
-                                    <i class="bi bi-fire me-1"></i> Öne Çıkan
-                                </span>
-                            }
-                        </div>
+    <div class="card h-100 border rounded shadow-sm position-relative"
+         style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
+                         @if (User.Identity.IsAuthenticated){
+        <button type="button"
+                class="btn btn-light border rounded-circle position-absolute top-0 end-0 m-2 shadow-sm favorite-btn"
+                onclick="toggleFavorite(@p.Id, this)">
+            <i class="bi @(isFavorited ? "bi-heart-fill text-danger" : "bi-heart")"></i>
+        </button>
+        }
+        <a href="/products/@p.Url" class="text-decoration-none text-dark d-block">
 
-                        <img src="~/img/products/@p.Image" class="card-img-top p-2" alt="@p.Name"
-                            style="height: 180px; object-fit: contain;" />
+            <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
+                @if (p.IsFeatured)
+                {
+                    <span class="badge rounded-pill bg-danger">
+                        <i class="bi bi-fire me-1"></i> Öne Çıkan
+                    </span>
+                }
+            </div>
 
-                        <div class="card-body text-center">
-                            <div class="mb-1 text-warning">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <small class="text-muted">(12)</small>
-                            </div>
-                            <h6 class="card-title text-truncate">@p.Name</h6>
-                            <h5 class="text-danger fw-bold">@p.Price ₺</h5>
-                            <p class="text-success mb-0" style="font-size: 0.9rem;">
-                                KDV dahil ücretsiz kargo
-                            </p>
-                        </div>
-                    </a>
+            <img src="~/img/products/@p.Image" class="card-img-top p-2" alt="@p.Name"
+                 style="height: 180px; object-fit: contain;" />
+
+            <div class="card-body text-center">
+                <div class="mb-1 text-warning">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
+                    <small class="text-muted">(12)</small>
                 </div>
-            }
+                <h6 class="card-title text-truncate">@p.Name</h6>
+                <h5 class="text-danger fw-bold">@p.Price ₺</h5>
+                <p class="text-success mb-0" style="font-size: 0.9rem;">
+                    KDV dahil ücretsiz kargo
+                </p>
+            </div>
+        </a>
+    </div>
+}
+
         </div>
 
         <button onclick="scrollFeatured(-1)"
@@ -108,6 +117,9 @@
         </button>
     </div>
 }
+
+
+
 
 @if (Model.Campaigns?.Any(c => c.IsActive) == true)
 
@@ -153,10 +165,20 @@
         <div id="bestSellerContainer" class="d-flex overflow-hidden gap-3">
             @foreach (var p in Model.BestSellerProducts)
             {
-                <div class="card h-100 border rounded shadow-sm position-relative"
-                    style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
-                    <a href="/products/@p.Url" class="text-decoration-none text-dark">
+                var isFavorited = Model.FavoriteProductIds?.Contains(p.Id) == true;
 
+                <div class="card h-100 border rounded shadow-sm position-relative"
+                     style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
+                                             @if (User.Identity.IsAuthenticated){
+
+                    <button type="button"
+                            class="btn btn-light border rounded-circle position-absolute top-0 end-0 m-2 shadow-sm favorite-btn"
+                            onclick="toggleFavorite(@p.Id, this)">
+                        <i class="bi @(isFavorited ? "bi-heart-fill text-danger" : "bi-heart")"></i>
+                    </button>
+                    }
+
+                    <a href="/products/@p.Url" class="text-decoration-none text-dark">
                         <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
                             @if (p.IsBestSeller)
                             {
@@ -165,8 +187,10 @@
                                 </span>
                             }
                         </div>
+
                         <img src="~/img/products/@p.Image" class="card-img-top p-2" alt="@p.Name"
-                            style="height: 180px; object-fit: contain;" />
+                             style="height: 180px; object-fit: contain;" />
+
                         <div class="card-body text-center">
                             <h6 class="card-title text-truncate">@p.Name</h6>
                             <h5 class="text-danger fw-bold">@p.Price ₺</h5>
@@ -179,13 +203,12 @@
             }
         </div>
 
-
         <button onclick="scrollBestSellers(-1)"
-            class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm" style="z-index: 2;">
+                class="btn btn-light position-absolute top-50 start-0 translate-middle-y shadow-sm" style="z-index: 2;">
             <i class="bi bi-chevron-left fs-4"></i>
         </button>
         <button onclick="scrollBestSellers(1)"
-            class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm" style="z-index: 2;">
+                class="btn btn-light position-absolute top-50 end-0 translate-middle-y shadow-sm" style="z-index: 2;">
             <i class="bi bi-chevron-right fs-4"></i>
         </button>
     </div>
@@ -254,7 +277,6 @@
         const delay = 5;
         let scrolled = 0;
 
-        const totalScroll = container.scrollWidth / 2;
         const maxScrollLeft = container.scrollWidth - container.clientWidth;
 
         const smoothScroll = setInterval(() => {
@@ -284,4 +306,33 @@
     function scrollCampaigns(direction) {
         scrollHorizontally("campaignContainer", direction);
     }
+
+function toggleFavorite(productId, btn) {
+    fetch('/Account/ToggleFavorite', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: productId })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Sunucu hatası");
+        return res.json();
+    })
+    .then(data => {
+        const icon = btn.querySelector('i');
+        if (data.favorited) {
+            icon.classList.remove('bi-heart');
+            icon.classList.add('bi-heart-fill', 'text-danger');
+        } else {
+            icon.classList.remove('bi-heart-fill', 'text-danger');
+            icon.classList.add('bi-heart');
+        }
+    })
+    .catch(error => {
+        console.error("Hata:", error);
+        alert("Favori işlemi sırasında hata oluştu.");
+    });
+}
+
 </script>

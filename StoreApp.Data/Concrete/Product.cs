@@ -1,4 +1,5 @@
 using StoreApp.Data.Helpers;
+using StoreApp.Data.Entities;
 namespace StoreApp.Data.Concrete
 {
     public class Product
@@ -29,6 +30,9 @@ namespace StoreApp.Data.Concrete
         }
         public bool IsApproved { get; set; } = true;
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
 
 
     }

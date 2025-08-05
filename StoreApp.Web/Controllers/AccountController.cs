@@ -525,5 +525,77 @@ namespace StoreApp.Web.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ToggleFavorite([FromBody] FavoriteToggleModel model)
+        {
+            if (model == null || model.ProductId == 0)
+                return BadRequest("Geçersiz veri");
+
+            if (!User.Identity.IsAuthenticated)
+                return Unauthorized();
+
+            try
+            {
+                var userId = _userManager.GetUserId(User);
+                var productId = model.ProductId;
+
+                var isFavorited = await _storeRepository.IsProductFavoritedAsync(userId, productId);
+
+                if (isFavorited)
+                {
+                    await _storeRepository.RemoveFavoriteAsync(userId, productId);
+                    return Json(new { favorited = false });
+                }
+                else
+                {
+                    await _storeRepository.AddFavoriteAsync(userId, productId);
+                    return Json(new { favorited = true });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Favorites(string category = null, string search = null)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var favoriteProducts = await _storeRepository.GetUserFavoriteProductsAsync(user.Id);
+
+            var categories = favoriteProducts
+                .SelectMany(p => p.ProductCategories.Select(pc => pc.Category))
+                .Distinct()
+                .ToList();
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                category = category.ToLower();
+                favoriteProducts = favoriteProducts
+                    .Where(p => p.ProductCategories
+                        .Any(pc => pc.Category.Name.ToLower() == category))
+                    .ToList();
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                favoriteProducts = favoriteProducts
+                    .Where(p => p.Name.ToLower().Contains(search))
+                    .ToList();
+            }
+
+            ViewBag.Categories = categories;
+            ViewBag.SelectedCategory = category;
+            ViewBag.Search = search;
+
+            return View(favoriteProducts);
+        }
+
+
+
     }
 }

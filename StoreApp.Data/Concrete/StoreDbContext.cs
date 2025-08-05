@@ -28,6 +28,8 @@ public class StoreDbContext : IdentityDbContext<AppUser>
 
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Favorite> Favorites => Set<Favorite>();
+
 
 
 
@@ -45,6 +47,22 @@ public class StoreDbContext : IdentityDbContext<AppUser>
             entity.Property(u => u.PhoneNumber).HasMaxLength(20);
 
         });
+
+        modelBuilder.Entity<Favorite>()
+    .HasKey(f => new { f.AppUserId, f.ProductId });
+
+        modelBuilder.Entity<Favorite>()
+            .HasOne(f => f.AppUser)
+            .WithMany(u => u.Favorites)
+            .HasForeignKey(f => f.AppUserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Favorite>()
+            .HasOne(f => f.Product)
+            .WithMany(p => p.Favorites)
+            .HasForeignKey(f => f.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
 
         // Composite Key for ProductCategory
         modelBuilder.Entity<ProductCategory>()

@@ -1230,6 +1230,27 @@ namespace StoreApp.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("StoreApp.Data.Entities.Favorite", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AppUserId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("StoreApp.Data.Entities.SiteSocialAddressSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -1449,6 +1470,25 @@ namespace StoreApp.Data.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("StoreApp.Data.Entities.Favorite", b =>
+                {
+                    b.HasOne("StoreApp.Data.Entities.AppUser", "AppUser")
+                        .WithMany("Favorites")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StoreApp.Data.Concrete.Product", "Product")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("StoreApp.Data.Concrete.Category", b =>
                 {
                     b.Navigation("ProductCategories");
@@ -1461,12 +1501,16 @@ namespace StoreApp.Data.Migrations
 
             modelBuilder.Entity("StoreApp.Data.Concrete.Product", b =>
                 {
+                    b.Navigation("Favorites");
+
                     b.Navigation("ProductCategories");
                 });
 
             modelBuilder.Entity("StoreApp.Data.Entities.AppUser", b =>
                 {
                     b.Navigation("Addresses");
+
+                    b.Navigation("Favorites");
                 });
 #pragma warning restore 612, 618
         }

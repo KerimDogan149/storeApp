@@ -1,4 +1,5 @@
 using StoreApp.Data.Entities;
+using StoreApp.Data.Concrete;
 namespace StoreApp.Web.Models;
 
 public class ProductViewModel
@@ -13,6 +14,10 @@ public class ProductViewModel
     public bool IsFeatured { get; set; } = false;
     public bool IsBestSeller { get; set; } = false;
     public string Category { get; set; } = string.Empty;
+    public bool IsFavorited { get; set; }
+        public int Stock { get; set; }
+    public List<ProductCategory> ProductCategories { get; set; } = new();
+
 }
 public class ProductListViewModel
 {
@@ -20,6 +25,8 @@ public class ProductListViewModel
 
     public IEnumerable<ProductViewModel> FeaturedProducts { get; set; } = Enumerable.Empty<ProductViewModel>();
     public IEnumerable<ProductViewModel> BestSellerProducts { get; set; } = Enumerable.Empty<ProductViewModel>();
+
+     public List<int> FavoriteProductIds { get; set; } = new();
 
     public IEnumerable<Slide> Slides { get; set; } = Enumerable.Empty<Slide>();
 

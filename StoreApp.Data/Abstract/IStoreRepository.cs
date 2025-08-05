@@ -23,6 +23,7 @@ namespace StoreApp.Data.Abstract
         IQueryable<OrderItem> OrderItems { get; }
 
         IQueryable<ProductCategory> ProductCategories { get; }
+        IQueryable<Favorite> Favorites { get; }
 
 
 
@@ -101,6 +102,12 @@ namespace StoreApp.Data.Abstract
         Task SaveChangesAsync();
 
 
+        //favori işlemleri
+        Task AddFavoriteAsync(string userId, int productId);
+        Task RemoveFavoriteAsync(string userId, int productId);
+        Task<List<Product>> GetUserFavoriteProductsAsync(string userId);
+        Task<bool> IsProductFavoritedAsync(string userId, int productId);
+        Task<List<int>> GetFavoriteProductIdsAsync(string userId);
 
 
     }

@@ -38,6 +38,9 @@ namespace StoreApp.Data.Concrete
 
         public IQueryable<ProductCategory> ProductCategories => _context.ProductCategories;
 
+        public IQueryable<Favorite> Favorites => _context.Favorites;
+
+
         // PRODUCT VE CATEGORY İŞLEMLERİ
         public void CreateProduct(Product entity)
         {
@@ -321,6 +324,49 @@ namespace StoreApp.Data.Concrete
             await _context.SaveChangesAsync();
         }
 
+
+        //Favorite
+        public async Task AddFavoriteAsync(string userId, int productId)
+        {
+            var exists = await _context.Favorites.AnyAsync(f => f.AppUserId == userId && f.ProductId == productId);
+            if (!exists)
+            {
+                _context.Favorites.Add(new Favorite { AppUserId = userId, ProductId = productId });
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task RemoveFavoriteAsync(string userId, int productId)
+        {
+            var fav = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.AppUserId == userId && f.ProductId == productId);
+            if (fav != null)
+            {
+                _context.Favorites.Remove(fav);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<Product>> GetUserFavoriteProductsAsync(string userId)
+        {
+            return await _context.Favorites
+                .Where(f => f.AppUserId == userId)
+                .Include(f => f.Product)
+                .Select(f => f.Product)
+                .ToListAsync();
+        }
+        public async Task<List<int>> GetFavoriteProductIdsAsync(string userId)
+        {
+            return await _context.Favorites
+                .Where(f => f.AppUserId == userId)
+                .Select(f => f.ProductId)
+                .ToListAsync();
+        }
+
+        public async Task<bool> IsProductFavoritedAsync(string userId, int productId)
+        {
+            return await _context.Favorites.AnyAsync(f => f.AppUserId == userId && f.ProductId == productId);
+        }
 
 
 
