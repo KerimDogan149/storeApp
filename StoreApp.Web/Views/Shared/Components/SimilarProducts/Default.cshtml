@@ -1,0 +1,51 @@
+@model List<StoreApp.Data.Concrete.Product>
+
+@if (Model != null && Model.Any())
+{
+    <div class="container my-5">
+        <h4 class="fw-bold mb-3 text-primary">Benzer Ürünler</h4>
+
+        <div class="d-flex flex-wrap gap-3 justify-content-center mt-3">
+            @foreach (var p in Model)
+            {
+                <div class="card h-100 border rounded shadow-sm position-relative"
+                     style="min-width: 250px; max-width: 250px; flex: 0 0 auto;">
+                    <a href="/products/@p.Url" class="text-decoration-none text-dark">
+
+                        <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
+                            @if (p.IsBestSeller)
+                            {
+                                <span class="badge rounded-pill bg-success">
+                                    <i class="bi bi-star me-1"></i> Çok Satan
+                                </span>
+                            }
+                            @if (p.IsFeatured)
+                            {
+                                <span class="badge rounded-pill bg-danger">
+                                    <i class="bi bi-fire me-1"></i> Öne Çıkan
+                                </span>
+                            }
+                        </div>
+
+                        <img src="~/img/products/@p.Image" class="card-img-top p-2" alt="@p.Name"
+                             style="height: 180px; object-fit: contain;" />
+
+                        <div class="card-body text-center">
+                            <div class="mb-1 text-warning">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                                <small class="text-muted">(12)</small>
+                            </div>
+                            <h6 class="card-title text-truncate">@p.Name</h6>
+                            <h5 class="text-danger fw-bold">@p.Price ₺</h5>
+                            <p class="text-success mb-0" style="font-size: 0.9rem;">
+                                KDV dahil ücretsiz kargo
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+}

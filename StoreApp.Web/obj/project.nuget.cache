@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ZlW3FIja78A=",
+  "dgSpecHash": "BtOSw0C3Nqw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\kerim\\storeApp\\storeapp.web\\StoreApp.Web.csproj",
+  "projectFilePath": "C:\\Users\\kerim\\storeApp\\storeApp.web\\StoreApp.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kerim\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\kerim\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

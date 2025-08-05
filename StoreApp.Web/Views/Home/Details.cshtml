@@ -82,3 +82,6 @@
         </div>
     </div>
 </div>
+<hr>
+@await Component.InvokeAsync("SimilarProducts", new { productId = Model.Id })
+

@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kerim\\storeApp\\storeapp.web\\StoreApp.Web.csproj": {}
+    "C:\\Users\\kerim\\storeApp\\storeApp.web\\StoreApp.Web.csproj": {}
   },
   "projects": {
     "C:\\Users\\kerim\\storeApp\\StoreApp.Data\\StoreApp.Data.csproj": {
@@ -99,14 +99,14 @@
         }
       }
     },
-    "C:\\Users\\kerim\\storeApp\\storeapp.web\\StoreApp.Web.csproj": {
+    "C:\\Users\\kerim\\storeApp\\storeApp.web\\StoreApp.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kerim\\storeApp\\storeapp.web\\StoreApp.Web.csproj",
+        "projectUniqueName": "C:\\Users\\kerim\\storeApp\\storeApp.web\\StoreApp.Web.csproj",
         "projectName": "StoreApp.Web",
-        "projectPath": "C:\\Users\\kerim\\storeApp\\storeapp.web\\StoreApp.Web.csproj",
+        "projectPath": "C:\\Users\\kerim\\storeApp\\storeApp.web\\StoreApp.Web.csproj",
         "packagesPath": "C:\\Users\\kerim\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kerim\\storeApp\\storeapp.web\\obj\\",
+        "outputPath": "C:\\Users\\kerim\\storeApp\\storeApp.web\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
