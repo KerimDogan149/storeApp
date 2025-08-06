@@ -19,7 +19,7 @@ namespace StoreApp.Web.Components
         {
             _context = context;
         }
-        
+
         public IViewComponentResult Invoke()
         {
             var categories = _context.Categories

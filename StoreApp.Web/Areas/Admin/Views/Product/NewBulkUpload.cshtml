@@ -1,0 +1,49 @@
+@model ProductBulkUploadViewModel
+@using StoreApp.Web.Areas.Admin.Models
+
+@{
+    ViewData["Title"] = "Yeni Ürün Ekleme";
+}
+
+
+<h4 class="fw-bold text-primary mb-4">
+ <i class="bi bi-file-earmark-plus me-1 "></i> Excel İle Yeni Ürün Yükleme
+</h4>@if (ViewBag.Errors is List<string> errorList && errorList.Any())
+{
+    <div class="alert alert-danger border border-danger shadow-sm rounded-3 p-3">
+        <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-exclamation-triangle-fill fs-4 me-2 text-danger"></i>
+            <strong class="fs-5">Yükleme Başarısız</strong>
+        </div>
+        <p class="mb-2">Aşağıdaki hataları düzeltip tekrar deneyin:</p>
+        <ul class="mb-0 ps-3">
+            @foreach (var err in errorList)
+            {
+                <li class="mb-1">@err</li>
+            }
+        </ul>
+    </div>
+}
+@if (TempData["success"] is string successMessage)
+{
+    <div class="alert alert-success border border-success shadow-sm rounded-3 p-3">
+        <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-check-circle-fill fs-4 me-2 text-success"></i>
+            <strong class="fs-5">İşlem Başarılı</strong>
+        </div>
+        <p class="mb-0">@successMessage</p>
+    </div>
+}
+
+<a asp-action="DownloadNewTemplate" class="btn btn-outline-primary mb-3">
+    <i class="bi bi-download"></i> Excel Şablonunu İndir
+</a>
+
+<form asp-action="NewBulkUpload" method="post" enctype="multipart/form-data" class="mb-3">
+    <div class="mb-3">
+        <label asp-for="File" class="form-label"></label>
+        <input asp-for="File" type="file" class="form-control" />
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary"> <i class="bi bi-upload me-1"></i> Yükle</button>
+</form>

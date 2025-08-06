@@ -4,6 +4,8 @@ using StoreApp.Data.Abstract;
 using StoreApp.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using StoreApp.Data.Entities;
+using StoreApp.Web.Services;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,12 +28,31 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
+builder.Services.AddScoped<LocationService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Admin/Account/Login"; // Giriş yapılmamışsa yönlendirilecek yer
+    options.LoginPath = "/Account/Login"; // default fallback
+    options.AccessDeniedPath = "/Account/AccessDenied";
+
+    options.Events.OnRedirectToLogin = context =>
+    {
+        var requestPath = context.Request.Path;
+
+        if (requestPath.StartsWithSegments("/Admin", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.Redirect("/Admin/Account/Login");
+        }
+        else
+        {
+            context.Response.Redirect("/Account/Login");
+        }
+
+        return Task.CompletedTask;
+    };
 });
+
 
 var app = builder.Build();
 app.UseStaticFiles();

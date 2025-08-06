@@ -1,0 +1,172 @@
+@model List<StoreApp.Web.Models.OrderSummaryViewModel>
+@using StoreApp.Data.Concrete
+@using StoreApp.Data.Helpers
+@using StoreApp.Web.Models
+
+@{
+    ViewData["Title"] = "Siparişlerim";
+    var filter = ViewBag.Filter as UserOrdersFilterViewModel;
+    var categories = ViewBag.Categories as List<Category>;
+}
+
+<h2 class="mb-4 fw-bold text-primary">
+    <i class="bi bi-box-seam me-2"></i> Siparişlerim
+</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-warning">@error.ErrorMessage</div>
+    }
+}
+
+<form method="get" class="mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label">Sipariş Durumu</label>
+            <select name="Status" class="form-select">
+                <option value="">Tümü</option>
+                @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                {
+                    <option value="@((int)status)" selected="@(filter?.Status == status)">
+                        @status.GetDisplayName()
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Başlangıç Tarihi</label>
+            <input type="date" name="StartDate" class="form-control"
+                value="@filter?.StartDate?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Bitiş Tarihi</label>
+            <input type="date" name="EndDate" class="form-control" value="@filter?.EndDate?.ToString("yyyy-MM-dd")" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Min Tutar (₺)</label>
+            <input type="number" name="MinTotal" class="form-control" value="@filter?.MinTotal" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Max Tutar (₺)</label>
+            <input type="number" name="MaxTotal" class="form-control" value="@filter?.MaxTotal" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Ürün Adı</label>
+            <input type="text" name="ProductName" class="form-control" value="@filter?.ProductName" />
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Kategori</label>
+            <select name="CategoryId" class="form-select">
+                <option value="">Tümü</option>
+                @foreach (var cat in categories)
+                {
+                    <option value="@cat.Id" selected="@(filter?.CategoryId == cat.Id)">
+                        @cat.Name
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6 ms-auto text-end">
+            <label class="form-label d-block invisible">Filtrele</label>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-primary">
+                    Filtrele
+                </button>
+                <a asp-action="Orders" asp-controller="Account" class="btn btn-outline-secondary">
+                    Temizle
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center shadow-sm rounded p-4">
+        <i class="bi bi-bag-x fs-1 text-secondary d-block mb-2"></i>
+        Henüz hiç siparişiniz bulunmamaktadır.
+        <br />
+        <a href="/" class="btn btn-outline-dark mt-3">
+            <i class="bi bi-house-door"></i> Alışverişe Başla
+        </a>
+    </div>
+}
+else
+{
+    <div class="accordion" id="ordersAccordion">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var order = Model[i];
+            <div class="accordion-item border-0 shadow-sm mb-4 rounded-3 overflow-hidden">
+                <h2 class="accordion-header" id="heading-@order.OrderId">
+                    <button class="accordion-button collapsed bg-white px-4 py-3" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse-@order.OrderId" aria-expanded="false" aria-controls="collapse-@order.OrderId">
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <div class="text-start">
+                                <div class="fw-bold text-dark">Sipariş #@order.OrderId</div>
+                                <small class="text-muted">Tarih: @order.OrderDate.ToString("dd MMM yyyy HH:mm")</small>
+                            </div>
+                            <div class="d-flex flex-column text-end">
+                                <span class="fw-bold fs-6 mb-1">@order.TotalAmount.ToString("N0") ₺</span>
+                                <span class="badge rounded-pill @order.Status.GetOrderStatusBadgeClass()">
+                                    @order.Status.GetDisplayName()
+                                </span>
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+
+                <div id="collapse-@order.OrderId" class="accordion-collapse collapse" aria-labelledby="heading-@order.OrderId"
+                    data-bs-parent="#ordersAccordion">
+                    <div class="accordion-body bg-light px-4 py-4">
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-2 text-secondary">Teslimat Adresi</h6>
+                            <div class="bg-white border rounded p-3">
+                                <div class="fw-bold">@order.Address.Title</div>
+                                <div>@order.Address.FullName - @order.Address.PhoneNumber</div>
+                                <div>@order.Address.Province / @order.Address.District / @order.Address.Neighborhood</div>
+                                <div class="text-muted">@order.Address.FullAddress</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h6 class="fw-bold mb-3 text-secondary">Ürünler</h6>
+                            <ul class="list-group shadow-sm">
+                                @foreach (var item in order.Items)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <a href="/products/@item.Product.Url"
+                                                class="d-flex align-items-center text-decoration-none text-dark">
+                                                <img src="~/img/products/@item.Product.Image" alt="@item.Product.Name"
+                                                    class="me-3 rounded border"
+                                                    style="width: 60px; height: 60px; object-fit: contain;" />
+                                                <div>
+                                                    <div class="fw-semibold">@item.Product.Name</div>
+                                                    <small class="text-muted">@item.Quantity x @item.Price.ToString("N0") ₺</small>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="text-end fw-bold">
+                                            @((item.Quantity * item.Price).ToString("N0")) ₺
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

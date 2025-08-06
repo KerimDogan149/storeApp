@@ -7,7 +7,8 @@
 
     <div id="categoryWrapper" class="category-slider-wrapper">
         <div class="category-slider">
-            <a href="/products" class="category-box text-decoration-none @(ViewBag.SelectedCategory == null ? "selected" : "")">
+            <a href="/products"
+                class="category-box text-decoration-none @(ViewBag.SelectedCategory == null ? "selected" : "")">
                 <div class="category-img-wrapper">
                     <img src="~/img/categories/all.jpg" alt="Tüm Ürünler" />
                 </div>
@@ -16,10 +17,8 @@
 
             @foreach (var category in Model)
             {
-                <a asp-controller="Home"
-                   asp-action="Index"
-                   asp-route-category="@category.Url"
-                   class="category-box text-decoration-none @(ViewBag.SelectedCategory == category.Url ? "selected" : "")">
+                <a asp-controller="Home" asp-action="Index" asp-route-category="@category.Url"
+                    class="category-box text-decoration-none @(ViewBag.SelectedCategory == category.Url ? "selected" : "")">
                     <div class="category-img-wrapper">
                         <img src="~/img/categories/@category.Image" alt="@category.Name" />
                     </div>

@@ -1,4 +1,5 @@
 using StoreApp.Data.Helpers;
+using StoreApp.Data.Entities;
 namespace StoreApp.Data.Concrete
 {
     public class Product
@@ -13,19 +14,26 @@ namespace StoreApp.Data.Concrete
         public string Image { get; set; } = string.Empty;
         public decimal Price { get; set; }
 
+        public int Stock { get; set; }
         public bool IsFeatured { get; set; } = false;
 
         public bool IsBestSeller { get; set; } = false;
-        public List<Category> Categories { get; set; } = new();
+        public List<ProductCategory> ProductCategories { get; set; } = new();
 
-        // Constructor ekliyoruz (Name verilince Url otomatik oluşsun)
         public Product()
         {
         }
         public Product(string name)
         {
             Name = name;
-            Url = name.ToUrlSlug(); // Uzantıyı burada otomatik ayarlıyoruz
+            Url = name.ToUrlSlug();
         }
+        public bool IsApproved { get; set; } = true;
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
+
+
     }
 }

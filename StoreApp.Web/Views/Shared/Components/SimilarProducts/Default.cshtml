@@ -1,0 +1,87 @@
+@model List<ProductViewModel>
+
+@if (Model != null && Model.Any())
+{
+    <div class="container my-5">
+        <h4 class="fw-bold mb-4">Benzer Ürünler</h4>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var product in Model)
+            {
+                var isFavorited = product.IsFavorited;
+
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm position-relative">
+
+                        <!-- Favori Butonu -->
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <button type="button"
+                                    class="btn btn-light border rounded-circle position-absolute top-0 end-0 m-2 shadow-sm favorite-btn"
+                                    onclick="toggleFavorite(@product.Id, this)">
+                                <i class="bi @(isFavorited ? "bi-heart-fill text-danger" : "bi-heart")"></i>
+                            </button>
+                        }
+
+                        <a href="/products/@product.Url" class="text-decoration-none text-dark">
+                            <img src="~/img/products/@product.Image"
+                                 alt="@product.Name"
+                                 class="card-img-top p-3"
+                                 style="height: 180px; object-fit: contain;" />
+
+                            <div class="card-body text-center">
+                                <div class="mb-2 text-warning small">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
+                                    <span class="text-muted">(12)</span>
+                                </div>
+
+                                <h6 class="card-title text-truncate">@product.Name</h6>
+                                <h5 class="text-danger fw-bold">@product.Price ₺</h5>
+                                <p class="text-success mb-0 small">KDV dahil ücretsiz kargo</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function toggleFavorite(productId, btn) {
+            fetch('/Account/ToggleFavorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ productId })
+            })
+            .then(res => {
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        window.location.href = "/Account/Login";
+                    }
+                    throw new Error("Sunucu hatası");
+                }
+                return res.json();
+            })
+            .then(data => {
+                const icon = btn.querySelector('i');
+                if (data.favorited) {
+                    icon.classList.remove('bi-heart');
+                    icon.classList.add('bi-heart-fill', 'text-danger');
+                } else {
+                    icon.classList.remove('bi-heart-fill', 'text-danger');
+                    icon.classList.add('bi-heart');
+                }
+            })
+            .catch(err => {
+                console.error("Favori işlemi başarısız:", err);
+            });
+        }
+    </script>
+}

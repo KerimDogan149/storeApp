@@ -7,6 +7,7 @@ C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.GeneratedMS
 C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.AssemblyInfoInputs.cache
 C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.AssemblyInfo.cs
 C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.csproj.CoreCompileInputs.cache
+C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.sourcelink.json
 C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.dll
 C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\refint\StoreApp.Data.dll
 C:\Users\kerim\storeApp\StoreApp.Data\obj\Debug\net9.0\StoreApp.Data.pdb

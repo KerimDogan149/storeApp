@@ -10,7 +10,7 @@ namespace StoreApp.Data.Concrete
         public StoreDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<StoreDbContext>();
-            optionsBuilder.UseSqlite("Data Source=store.db"); 
+            optionsBuilder.UseSqlite("Data Source=store.db");
 
             return new StoreDbContext(optionsBuilder.Options);
         }

@@ -10,6 +10,27 @@ using StoreApp.Data.Abstract;
 using StoreApp.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using StoreApp.Data.Abstract;
+using StoreApp.Web.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using StoreApp.Data.Entities;
+using StoreApp.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using StoreApp.Data.Helpers;
+using StoreApp.Data.Concrete;
+using StoreApp.Web.Models;
+using StoreApp.Web.Services;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using StoreApp.Data.Entities;
 
 namespace StoreApp.Web.Controllers;
 
@@ -18,18 +39,24 @@ public class HomeController : Controller
     public int pageSize = 4;
     private readonly IStoreRepository _storeRepository;
     private readonly IMapper _mapper;
-    public HomeController(IStoreRepository storeRepository, IMapper mapper)
+            private readonly UserManager<AppUser> _userManager;
+
+    public HomeController(IStoreRepository storeRepository, IMapper mapper, UserManager<AppUser> userManager)
     {
         _storeRepository = storeRepository;
         _mapper = mapper;
+        _userManager = userManager;
+
     }
     public IActionResult Index(string category, int page = 1)
     {
         var featuredProducts = _storeRepository
                 .GetFeaturedProducts()
+                .Where(p => p.IsApproved)
                 .Select(p => _mapper.Map<ProductViewModel>(p));
 
         var bestSellers = _storeRepository.GetBestSellerProducts()
+        .Where(p => p.IsApproved)
         .Select(p => _mapper.Map<ProductViewModel>(p))
         .ToList();
 
@@ -41,15 +68,26 @@ public class HomeController : Controller
         var campaigns = _storeRepository
         .GetAllCampaignsAsync();
 
-
+          List<int> favoriteProductIds = new();
+        if (User.Identity!.IsAuthenticated)
+        {
+            var userId = _userManager.GetUserId(User);
+            favoriteProductIds = _storeRepository
+                .Favorites
+                .Where(f => f.AppUserId == userId)
+                .Select(f => f.ProductId)
+                .ToList();
+        }
         return View(new ProductListViewModel
         {
             Products = _storeRepository.GetProductsByCategory(category, page, pageSize)
+                .Where(p => p.IsApproved)
              .Select(product => _mapper.Map<ProductViewModel>(product)),
             FeaturedProducts = featuredProducts,
             BestSellerProducts = bestSellers,
             Slides = slides,
             Campaigns = campaigns.Result,
+            FavoriteProductIds = favoriteProductIds, // ✅ Favoriler burada ekleniyor
             PageInfo = new PageInfo
             {
                 ItemsPerPage = pageSize,
@@ -62,67 +100,102 @@ public class HomeController : Controller
     }
 
 
-    public IActionResult Details(string url)
+[HttpGet]
+public async Task<IActionResult> Details(string url)
+{
+    if (string.IsNullOrWhiteSpace(url))
+        return NotFound();
+
+    var product = await _storeRepository.Products
+        .Include(p => p.ProductCategories)
+            .ThenInclude(pc => pc.Category)
+        .FirstOrDefaultAsync(p => p.Url == url && p.IsApproved);
+
+    if (product == null)
+        return NotFound();
+
+    // Favori kontrolü (kullanıcı giriş yapmışsa)
+    bool isFavorited = false;
+    if (User.Identity.IsAuthenticated)
     {
-        if (string.IsNullOrEmpty(url))
-            return NotFound();
-
-        var product = _storeRepository.Products
-            .Include(p => p.Categories)
-            .FirstOrDefault(p => p.Url == url);
-
-        if (product == null)
-            return NotFound();
-
-        return View(product);
+        var userId = _userManager.GetUserId(User);
+        isFavorited = await _storeRepository.IsProductFavoritedAsync(userId, product.Id);
     }
 
-
-
-    public IActionResult Category(string category, int page = 1)
+    var viewModel = new ProductViewModel
     {
-        int pageSize = 12;
+        Id = product.Id,
+        Name = product.Name,
+        Url = product.Url,
+        Description = product.Description,
+        Image = product.Image,
+        Price = product.Price,
+        Stock = product.Stock,
+        IsFeatured = product.IsFeatured,
+        IsBestSeller = product.IsBestSeller,
+        ProductCategories = product.ProductCategories.ToList(),
+        IsFavorited = isFavorited
+    };
 
-        var filteredProducts = _storeRepository.Products
-            .Include(p => p.Categories)
-            .Where(p => p.Categories.Any(c => c.Url.ToLower() == category.ToLower()))
-            .ToList();
+    return View(viewModel);
+}
 
-        var productViewModels = filteredProducts
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(p => new ProductViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Url = p.Url,
-                Description = p.Description,
-                Image = p.Image,
-                Price = p.Price,
-                Category = p.Categories.FirstOrDefault()?.Name ?? ""
-            })
-            .ToList();
 
-        int totalItems = filteredProducts.Count;
 
-        var categoryName = _storeRepository.Categories
-            .FirstOrDefault(c => c.Url.ToLower() == category.ToLower())?.Name;
+public async Task<IActionResult> Category(string category, int page = 1)
+{
+    int pageSize = 12;
 
-        ViewBag.CategoryName = categoryName ?? "Kategori";
+    var filteredProducts = _storeRepository.Products
+        .Include(p => p.ProductCategories)
+            .ThenInclude(pc => pc.Category)
+        .Where(p => p.IsApproved && p.ProductCategories.Any(pc => pc.Category.Url.ToLower() == category.ToLower()))
+        .ToList();
 
-        var viewModel = new ProductListViewModel
+    var productViewModels = filteredProducts
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(p => new ProductViewModel
         {
-            Products = productViewModels,
-            PageInfo = new PageInfo
-            {
-                CurrentPage = page,
-                ItemsPerPage = pageSize,
-                TotalItems = totalItems
-            }
-        };
+            Id = p.Id,
+            Name = p.Name,
+            Url = p.Url,
+            Description = p.Description,
+            Image = p.Image,
+            Price = p.Price,
+            Category = p.ProductCategories.FirstOrDefault()?.Category?.Name ?? ""
+        })
+        .ToList();
 
-        return View(viewModel);
-    }
+    int totalItems = filteredProducts.Count;
+
+    var categoryName = _storeRepository.Categories
+        .FirstOrDefault(c => c.Url.ToLower() == category.ToLower())?.Name;
+
+    ViewBag.CategoryName = categoryName ?? "Kategori";
+
+    var user = await _userManager.GetUserAsync(User);
+    var userId = user?.Id;
+
+    var favoriteIds = userId != null
+        ? await _storeRepository.GetFavoriteProductIdsAsync(userId)
+        : new List<int>();
+
+    var viewModel = new ProductListViewModel
+    {
+        Products = productViewModels,
+        PageInfo = new PageInfo
+        {
+            CurrentPage = page,
+            ItemsPerPage = pageSize,
+            TotalItems = totalItems
+        },
+        FavoriteProductIds = favoriteIds
+    };
+
+    return View(viewModel);
+}
+
 
     public IActionResult Search(string q)
     {
@@ -131,12 +204,10 @@ public class HomeController : Controller
         if (string.IsNullOrWhiteSpace(q))
             return RedirectToAction("Index");
 
-        // Veriyi önce belleğe alıyoruz (EF Core null işlemlerini SQL'e çeviremediği için)
         var matchedProducts = _storeRepository.Products
-            .Where(p => p.Name.ToLower().Contains(q.ToLower()))
+            .Where(p => p.IsApproved && p.Name.ToLower().Contains(q.ToLower()))
             .ToList();
 
-        // Sonrasında C# tarafında işliyoruz
         var products = matchedProducts
             .Select(p => new ProductViewModel
             {
@@ -146,9 +217,10 @@ public class HomeController : Controller
                 Description = p.Description,
                 Price = p.Price,
                 Image = p.Image,
-                Category = p.Categories.FirstOrDefault()?.Name ?? ""
+                Category = p.ProductCategories.FirstOrDefault()?.Category?.Name ?? ""
             })
             .ToList();
+
 
         var viewModel = new ProductListViewModel
         {
@@ -159,19 +231,19 @@ public class HomeController : Controller
         return View("Search", viewModel);
     }
 
-        [Route("campaign/{url}")]
-        public async Task<IActionResult> CampaignDetail(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return NotFound();
+    [Route("campaign/{url}")]
+    public async Task<IActionResult> CampaignDetail(string url)
+    {
+        if (string.IsNullOrEmpty(url))
+            return NotFound();
 
-            var campaign = await _storeRepository.GetCampaignByUrlAsync(url);
+        var campaign = await _storeRepository.GetCampaignByUrlAsync(url);
 
-            if (campaign == null)
-                return NotFound();
+        if (campaign == null)
+            return NotFound();
 
-            return View("CampaignDetail", campaign);
-        }
+        return View("CampaignDetail", campaign);
+    }
 
 
 

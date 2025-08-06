@@ -1,0 +1,148 @@
+@model StoreApp.Web.Models.AddressViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Adres Düzenle";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <form asp-action="EditAddress" method="post" novalidate>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control" />
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Province" class="form-label">İl</label>
+            <select id="Province" name="Province" class="form-select">
+                <option value="">İl seçiniz</option>
+            </select>
+            <span asp-validation-for="Province" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="District" class="form-label">İlçe</label>
+            <select id="District" name="District" class="form-select" disabled>
+                <option value="">İlçe seçiniz</option>
+            </select>
+            <span asp-validation-for="District" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Neighborhood" class="form-label">Mahalle</label>
+            <select id="Neighborhood" name="Neighborhood" class="form-select" disabled>
+                <option value="">Mahalle seçiniz</option>
+            </select>
+            <span asp-validation-for="Neighborhood" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FullAddress" class="form-label"></label>
+            <textarea asp-for="FullAddress" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="FullAddress" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Güncelle</button>
+        <a asp-action="Addresses" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const provinceSelect = $('#Province');
+            const districtSelect = $('#District');
+            const neighborhoodSelect = $('#Neighborhood');
+
+            const selectedProvince = @Json.Serialize(Model.Province ?? "");
+            const selectedDistrict = @Json.Serialize(Model.District ?? "");
+            const selectedNeighborhood = @Json.Serialize(Model.Neighborhood ?? "");
+
+
+            $.getJSON('@Url.Action("GetAllProvinces", "Account")', function (data) {
+                provinceSelect.empty().append('<option value="">İl seçiniz</option>');
+                $.each(data, function (i, sehir) {
+                    provinceSelect.append($('<option>', {
+                        value: sehir,
+                        text: sehir
+                    }));
+                });
+
+                if (selectedProvince) {
+                    provinceSelect.val(selectedProvince);
+                    setTimeout(() => {
+                        provinceSelect.trigger('change');
+                    }, 200);
+                }
+            });
+
+
+            provinceSelect.on('change', function () {
+                const province = $(this).val();
+
+                districtSelect.empty().append('<option value="">İlçe seçiniz</option>').prop('disabled', true);
+                neighborhoodSelect.empty().append('<option value="">Mahalle seçiniz</option>').prop('disabled', true);
+
+                if (province) {
+                    $.getJSON('@Url.Action("GetDistricts", "Account")', { province: province }, function (data) {
+                        districtSelect.prop('disabled', false);
+                        $.each(data, function (i, ilce) {
+                            districtSelect.append($('<option>', {
+                                value: ilce,
+                                text: ilce
+                            }));
+                        });
+
+                        if (selectedDistrict) {
+                            districtSelect.val(selectedDistrict);
+                            setTimeout(() => {
+                                districtSelect.trigger('change');
+                            }, 200);
+                        }
+                    });
+                }
+            });
+
+
+            districtSelect.on('change', function () {
+                const province = provinceSelect.val();
+                const district = $(this).val();
+
+                neighborhoodSelect.empty().append('<option value="">Mahalle seçiniz</option>').prop('disabled', true);
+
+                if (province && district) {
+                    $.getJSON('@Url.Action("GetNeighborhoods", "Account")', { province: province, district: district }, function (data) {
+                        neighborhoodSelect.prop('disabled', false);
+                        $.each(data, function (i, mahalle) {
+                            neighborhoodSelect.append($('<option>', {
+                                value: mahalle,
+                                text: mahalle
+                            }));
+                        });
+
+                        if (selectedNeighborhood) {
+                            neighborhoodSelect.val(selectedNeighborhood);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

@@ -3,9 +3,9 @@
 @{
     ViewData["Title"] = "Kategori Düzenle";
     var selectedProducts = Model.AllProducts
-        .Where(p => Model.SelectedProductIds.Contains(p.Id)).ToList();
+    .Where(p => Model.SelectedProductIds.Contains(p.Id)).ToList();
     var unselectedProducts = Model.AllProducts
-        .Where(p => !Model.SelectedProductIds.Contains(p.Id)).ToList();
+    .Where(p => !Model.SelectedProductIds.Contains(p.Id)).ToList();
 }
 
 <div class="container mt-4">
@@ -14,7 +14,7 @@
     <form asp-action="Edit" method="post">
         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
         <input type="hidden" asp-for="Id" />
-        
+
         <div class="mb-3">
             <label asp-for="Name" class="form-label"></label>
             <input asp-for="Name" class="form-control" />
@@ -53,7 +53,6 @@
             </div>
         </div>
 
-        <!-- Seçilen ürünlerin Id'leri gizli input olarak gönderilir -->
         <div id="hiddenInputs"></div>
 
         <button type="submit" class="btn btn-success">Güncelle</button>
@@ -84,14 +83,12 @@
                 hiddenInputs.innerHTML += `<input type="hidden" name="SelectedProductIds" value="${opt.value}" />`;
             });
         }
-            btnAdd.addEventListener('click', () => moveSelected(selectedBox, allBox));
-            btnRemove.addEventListener('click', () => moveSelected(allBox, selectedBox));  
+        btnAdd.addEventListener('click', () => moveSelected(selectedBox, allBox));
+        btnRemove.addEventListener('click', () => moveSelected(allBox, selectedBox));
 
 
-        // İlk yüklemede hidden inputs oluştur
         updateHiddenInputs();
 
-        // Dinamik URL slug oluşturma
         function toUrlSlug(text) {
             return text
                 .toLowerCase()

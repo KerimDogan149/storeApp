@@ -1,0 +1,57 @@
+@using StoreApp.Web.Areas.Admin.Models
+@model List<NotificationViewModel>
+
+<li class="nav-item dropdown">
+    <a class="nav-link position-relative notification-icon" href="#" id="notificationDropdown" role="button"
+        data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell-fill fs-5 text-primary @(Model.Any(n => n.IsUnread) ? "shake-bell" : "")"></i>
+        @if (Model.Any(n => n.IsUnread))
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="font-size: 0.75rem;">
+                @Model.Count(n => n.IsUnread)
+            </span>
+        }
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow p-0" aria-labelledby="notificationDropdown"
+        style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+        <li class="dropdown-header bg-primary text-white fw-semibold py-2 px-3">
+            Bildirimler
+        </li>
+
+        @if (Model.Any())
+        {
+            @foreach (var n in Model)
+            {
+                var notificationClass = n.Type == "order" ? "notification-order" : "";
+
+                <li>
+                    <a href="@n.Url"
+                        class="dropdown-item d-flex align-items-start gap-2 py-2 px-3 border-bottom @notificationClass">
+                        <i class="bi @n.Icon text-@n.BadgeClass.Replace("bg-", "") fs-5"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-semibold">@n.Message</div>
+                            <small class="text-muted">@n.CreatedAt.ToString("dd MMM yyyy HH:mm")</small>
+                        </div>
+                    </a>
+                </li>
+            }
+
+            <li>
+                <hr class="dropdown-divider m-0" />
+            </li>
+            <li>
+                <a class="dropdown-item text-center text-primary fw-semibold py-2" href="/Admin/Notification/Index">
+                    Tüm Bildirimleri Gör
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="dropdown-item text-muted text-center py-3">
+                <i class="bi bi-inbox me-2"></i> Bildirim yok
+            </li>
+        }
+    </ul>
+</li>

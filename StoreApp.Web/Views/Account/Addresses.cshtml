@@ -1,0 +1,54 @@
+@model IEnumerable<StoreApp.Data.Entities.Address>
+
+@{
+    ViewData["Title"] = "Adreslerim";
+}
+
+<div class="container mt-4">
+    <h2>Adreslerim</h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="AddAddress" class="btn btn-primary">Yeni Adres Ekle</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Henüz kayıtlı adresiniz yok.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Adres Başlığı</th>
+                    <th>Ad Soyad</th>
+                    <th>Telefon</th>
+                    <th>İl / İlçe / Mahalle</th>
+                    <th>Detaylı Adres</th>
+                    <th style="width: 150px;">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var address in Model)
+                {
+                    <tr>
+                        <td>@address.Title</td>
+                        <td>@address.FullName</td>
+                        <td>@address.PhoneNumber</td>
+                        <td>@address.Province / @address.District / @address.Neighborhood</td>
+                        <td>@address.FullAddress</td>
+                        <td>
+                            <a asp-action="EditAddress" asp-route-id="@address.Id"
+                                class="btn btn-sm btn-primary me-1">Düzenle</a>
+
+                            <form asp-action="DeleteAddress" asp-route-id="@address.Id" method="post" class="d-inline"
+                                onsubmit="return confirm('Adresi silmek istediğinize emin misiniz?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

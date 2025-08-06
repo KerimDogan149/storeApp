@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="/lib/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
 
@@ -11,6 +12,7 @@
 
     <title>StoreApp</title>
 </head>
+
 <body>
     <header class="bg-white border-bottom shadow-sm py-3">
         <div class="container d-flex align-items-center justify-content-between">
@@ -18,48 +20,31 @@
                 <i class="bi bi-basket fs-4 me-2 text-primary"></i>
                 <span class="fw-bold fs-4">StoreApp</span>
             </a>
-            <!-- İstersen buraya arama çubuğu veya kullanıcı ikonları da ekleyebilirsin -->
         </div>
     </header>
 
     <div class="container my-3">
-    @RenderBody()
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+        @RenderBody()
     </div>
 
-<footer class="bg-body-tertiary text-dark py-5 mt-5 border-top">
-    <div class="container">
-        <div class="row g-5 justify-content-center text-center">
-
-            <!-- İletişim -->
-            <div class="col-md-6 text-center">
-                <h6 class="fw-bold mb-3 mx-3">Müşteri Hizmetleri</h6>
-                <div class="d-flex flex-column align-items-center">
-
-                    <div>
-                        <span class="mx-3"><i class="bi bi-telephone fs-4 mb-2"></i></span><a href="tel:08502221500" class="text-dark text-decoration-underline">0212 212 12 12</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sosyal Medya -->
-            <div class="col-md-6 text-center">
-                <h6 class="fw-bold mb-3">Bizi Takip Edin</h6>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="bi bi-youtube"></i></a>
-                </div>
-            </div>
-
+    <footer class="bg-body-tertiary text-dark py-5 mt-5 border-top">
+        <div class="container">
+            @await Component.InvokeAsync("SiteSocial")
         </div>
-    </div>
-</footer>
-
-
+    </footer>
 
 
     <script src="/lib/jquery/jquery.min.js"></script>
     <script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 </body>
+
 </html>

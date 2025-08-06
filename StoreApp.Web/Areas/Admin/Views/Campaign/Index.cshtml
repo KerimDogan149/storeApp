@@ -10,19 +10,19 @@
 
     <div class="row mb-3 align-items-center">
         <div class="col-md-9">
-        <form method="get" class="row row-cols-lg-auto g-2 align-items-center">
-            <div class="col-12">
-                <select name="status" class="form-select">
-                    <option value="">Tüm Durumlar</option>
-                    <option value="active" selected="@(currentStatus == "active")">Aktif</option>
-                    <option value="inactive" selected="@(currentStatus == "inactive")">Pasif</option>
-                </select>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-outline-primary">Filtrele</button>
-                <a asp-action="Index" class="btn btn-outline-secondary ms-1">Temizle</a>
-            </div>
-        </form>
+            <form method="get" class="row row-cols-lg-auto g-2 align-items-center">
+                <div class="col-12">
+                    <select name="status" class="form-select">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="active" selected="@(currentStatus == "active")">Aktif</option>
+                        <option value="inactive" selected="@(currentStatus == "inactive")">Pasif</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-primary">Filtrele</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary ms-1">Temizle</a>
+                </div>
+            </form>
         </div>
         <div class="col-md-3 text-end">
             <a asp-action="Create" class="btn btn-primary">
@@ -76,7 +76,8 @@
                         <td>
                             <div class="d-flex justify-content-center gap-2">
                                 <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-primary">Düzenle</a>
-                                <form asp-action="Delete" asp-route-id="@c.Id" method="post" onsubmit="return confirm('Bu kampanyayı silmek istediğinize emin misiniz?');">
+                                <form asp-action="Delete" asp-route-id="@c.Id" method="post"
+                                    onsubmit="return confirm('Bu kampanyayı silmek istediğinize emin misiniz?');">
                                     <button type="submit" class="btn btn-sm btn-danger">
                                         <i class="bi bi-trash"></i> Sil
                                     </button>

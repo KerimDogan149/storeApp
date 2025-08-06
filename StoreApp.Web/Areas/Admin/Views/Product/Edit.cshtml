@@ -33,7 +33,7 @@
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
 
-                <div class="form-check mb-3">
+        <div class="form-check mb-3">
             <input asp-for="IsFeatured" class="form-check-input" />
             <label asp-for="IsFeatured" class="form-check-label">Öne Çıkan Ürün</label>
         </div>
@@ -42,7 +42,7 @@
             <input asp-for="IsBestSeller" class="form-check-input" />
             <label asp-for="IsBestSeller" class="form-check-label">En Çok Satan Ürün</label>
         </div>
-        
+
 
         <div class="mb-3">
             <label class="form-label">Mevcut Görsel:</label><br />
@@ -65,7 +65,7 @@
         <div class="mb-3">
             <label class="form-label">Kategoriler</label>
             <select asp-for="SelectedCategoryIds" asp-items="@(new MultiSelectList(Model.AllCategories, "Id", "Name"))"
-                    class="form-select" multiple size="6"></select>
+                class="form-select" multiple size="6"></select>
             <span asp-validation-for="SelectedCategoryIds" class="text-danger"></span>
         </div>
 

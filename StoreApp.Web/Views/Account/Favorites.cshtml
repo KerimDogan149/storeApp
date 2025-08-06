@@ -1,0 +1,72 @@
+@model List<StoreApp.Data.Concrete.Product>
+
+<h4 class="fw-bold text-primary mb-4">
+Favorilerim</h4>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">Henüz favori ürününüz bulunmamaktadır.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="card h-100 position-relative border-0 shadow-sm">
+
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger rounded-circle position-absolute top-0 end-0 m-2 shadow-sm"
+                            onclick="toggleFavorite(@product.Id, this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+
+                    <a href="/products/@product.Url" class="text-decoration-none text-dark">
+                        <img src="~/img/products/@product.Image"
+                             class="card-img-top p-3"
+                             alt="@product.Name"
+                             style="height: 200px; object-fit: contain;" />
+
+                        <div class="card-body text-center">
+                            <h6 class="card-title text-truncate">@product.Name</h6>
+                            <h5 class="text-danger fw-bold">@product.Price ₺</h5>
+                        </div>
+                    </a>
+
+                    <div class="card-footer bg-white border-top-0 text-center pb-3">
+                        <form method="post" asp-page="/Cart">
+                            <input type="hidden" name="Id" value="@product.Id" />
+                            <button type="submit" class="btn btn-sm btn-dark">
+                                <i class="bi bi-cart-plus"></i> Sepete Ekle
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function toggleFavorite(productId, btnElement) {
+            fetch('/Account/ToggleFavorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({ productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.favorited) {
+                    btnElement.closest('.col').remove();
+                }
+            })
+            .catch(err => {
+                console.error("Favori kaldırma hatası:", err);
+            });
+        }
+    </script>
+}

@@ -68,6 +68,6 @@ namespace StoreApp.Web.Areas.Admin.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account", new { area = "Admin" });
         }
-        
+
     }
 }

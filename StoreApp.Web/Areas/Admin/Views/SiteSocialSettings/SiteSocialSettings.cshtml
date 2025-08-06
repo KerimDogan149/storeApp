@@ -1,0 +1,48 @@
+@model StoreApp.Web.Areas.Admin.Models.SiteSocialSettingsViewModel
+
+@{
+    ViewData["Title"] = "Sosyal Medya ve İletişim Ayarları";
+}
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="FacebookUrl" class="form-label"></label>
+            <input asp-for="FacebookUrl" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="InstagramUrl" class="form-label"></label>
+            <input asp-for="InstagramUrl" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TwitterUrl" class="form-label"></label>
+            <input asp-for="TwitterUrl" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="YoutubeUrl" class="form-label"></label>
+            <input asp-for="YoutubeUrl" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </form>
+</div>

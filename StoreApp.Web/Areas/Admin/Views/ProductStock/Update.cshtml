@@ -1,0 +1,46 @@
+@model StoreApp.Web.Areas.Admin.Models.ProductStockUpdateViewModel
+
+@{
+    ViewData["Title"] = "Stok Güncelle";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4">Stok Güncelle</h2>
+
+    <form asp-action="Update" method="post" class="row g-3">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="col-md-3 text-center">
+            <img src="~/img/products/@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded border" />
+        </div>
+
+        <div class="col-md-9">
+            <div class="mb-3">
+                <label class="form-label">Ürün Adı</label>
+                <input type="text" class="form-control" value="@Model.Name" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Fiyat</label>
+                <input type="text" class="form-control" value="@Model.Price.ToString("C0", new System.Globalization.CultureInfo("tr-TR"))" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Kategoriler</label>
+                <input type="text" class="form-control" value="@string.Join(", ", Model.CategoryNames)" disabled />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Stock" class="form-label"></label>
+                <input asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">İptal</a>
+                <button type="submit" class="btn btn-primary">Stok Güncelle</button>
+            </div>
+        </div>
+    </form>
+</div>
+
